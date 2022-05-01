@@ -1,0 +1,6 @@
+amqp==5.1.1
+celery==5.2.6
+Django==4.0.4
+django-filter==21.1
+djangorestframework==3.13.1
+Markdown==3.3.6

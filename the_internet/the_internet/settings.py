@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -130,3 +129,28 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+if USE_TZ:
+    # https://docs.celeryq.dev/en/stable/userguide/configuration.html#std:setting-timezone
+    CELERY_TIMEZONE = TIME_ZONE
+
+# See https://docs.celeryq.dev/en/stable/userguide/configuration.html
+# #std:setting-broker_url
+CELERY_BROKER_URL = "amqp://guest@localhost//" #'redis://localhost:6379/0'
+# #std:setting-result_backend
+# CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+# #std:setting-accept_content
+CELERY_ACCEPT_CONTENT = ["json"]
+# #std:setting-task_serializer
+CELERY_TASK_SERIALIZER = "json"
+# #std:setting-result_serializer
+CELERY_RESULT_SERIALIZER = "json"
+# #task-time-limit
+CELERY_TASK_TIME_LIMIT = 5 * 60 # in seconds
+# #task-soft-time-limit 
+CELERY_TASK_SOFT_TIME_LIMIT = 60 # in seconds
+# #beat-scheduler
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+CELERY_IMPORTS=("the_internet", )
