@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 class InternetLocation(models.Model):
 
@@ -9,12 +10,13 @@ class InternetLocation(models.Model):
     location_type = models.CharField(
         primary_key=True,
         choices=ContentLocation.choices,
+        max_length=128
     )
 
 class InternetContent(models.Model):
-    id = models.CharField(primary_key=True)
+    id = models.CharField(primary_key=True, max_length=128)
     timestamp = models.DateTimeField()
-    title = models.CharField()
+    title = models.CharField(max_length=512)
     url = models.URLField()
-    location = models.ForeignKey(InternetLocation, on_delete=models.SET_NULL)
+    location = models.ForeignKey(InternetLocation, null=True, on_delete=models.SET_NULL)
     additional_fields = models.JSONField()

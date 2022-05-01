@@ -25,12 +25,12 @@ SECRET_KEY = 'django-insecure-h*(16ugbn%yv_$@02=%r_@-s1kcfbyzxdx)7=9okcyb9p#+7p-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 
 # Application definition
 
 INSTALLED_APPS = [
+    'the_news.apps.TheNewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

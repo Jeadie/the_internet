@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TheListConfig(AppConfig):
+class TheNewsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'the_list'
+    name = 'the_news'
