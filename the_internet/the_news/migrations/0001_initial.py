@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='InternetContent',
+            name='InternetNews',
             fields=[
                 ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
                 ('timestamp', models.DateTimeField()),

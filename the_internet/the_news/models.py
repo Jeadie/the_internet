@@ -13,7 +13,7 @@ class InternetLocation(models.Model):
         max_length=128
     )
 
-class InternetContent(models.Model):
+class InternetNews(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     timestamp = models.DateTimeField()
     title = models.CharField(max_length=512)

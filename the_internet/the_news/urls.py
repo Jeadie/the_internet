@@ -1,7 +1,12 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
-from . import views
+from .views import InternetLocationViewSet, InternetNewsViewSet
+
+router = routers.DefaultRouter()
+router.register("", InternetNewsViewSet)
+router.register("locations", InternetLocationViewSet)
 
 urlpatterns = [
-    path('', views.index, name='index'),
+    path("", include(router.urls)),
 ]
