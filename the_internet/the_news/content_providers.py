@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum, auto
 from typing import Dict, List
 
 import bs4
+from pytz import UTC
 import requests
 
 from .models import ContentLocation
@@ -31,7 +32,7 @@ class InternetContent:
 
 def get_internet_content() -> List[InternetContent]:
     result = []
-    for c in [ProductHuntContentProvider(), HackerNewsContentProvider(), IndieHackerContentProvider()]:
+    for c in [RedditChannelContentProvider("technology"), ProductHuntContentProvider(), HackerNewsContentProvider(), IndieHackerContentProvider()]:
         resp = requests.get(c.getBaseWebsite())
         if resp.status_code != 200:
             continue
@@ -63,6 +64,98 @@ class InternetContentProvider(object):
         scraping specific websites.
         """
         pass
+
+class RedditChannelContentProvider(object):
+    """ Provides a uniform interface for internet content to be collected from different locations."""
+
+    def __init__(self, channel) -> None:
+        self.channel = channel
+
+    def getBaseWebsite(self) -> str:
+        """ Returns the website to GET that contains the internet content."""
+        return f"https://www.reddit.com/r/{self.channel}/top/?t=day"
+
+    def getContentId(self) -> ContentLocation:
+        """Returns the id for the content provider. Should not depend on the underlying content
+        (i.e may relate to the sub-characteristics of a website, but not the specific content.
+        """
+        return ContentLocation.REDDIT_CHANNEL_TODAY
+
+    def getContent(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
+        """Parses the internet content from a website, as a BeautifulSoup object, and returns a list
+        of individual content payloads. An individiual payload represents a single consumable piece
+        of content. 
+
+        getContent is intended to isolate all the awkward, hard-coded random logic required in web 
+        scraping specific websites.
+        """
+        contents_list = page.select("[data-testid=\"post-container\"]")
+        contents_list = filter(lambda x: len(x.find_all("span", text="promoted")) == 0, contents_list)
+
+        return list(map(lambda x: self.convertItemPost(x), contents_list))
+
+    def get_comments(self, x: bs4.Tag) -> InternetContent:
+        comments_box = x.select("[data-test-id=\"comments-page-link-num-comments\"]")
+        if not comments_box:
+            return 0
+        
+        comment_text = comments_box[0].find("span").get_text()
+
+        # Expected format ~"4.4k comments"
+        return self.parse_number_text(comment_text.split(" ")[0])
+
+    def parse_timestamp(self, x: bs4.Tag) -> datetime:
+        timestamp_box = x.select("[data-testid=\"post_timestamp\"]")
+        if not timestamp_box:
+            return datetime.now(tz=UTC)
+        
+        # "3 days ago"
+        # "14 hours ago"
+        # "just now"
+        # "1 minute ago"
+        time_diff = timestamp_box[0].get_text()
+
+        if time_diff == "just now":
+            return datetime.now(tz=UTC)
+
+        parts = time_diff.split(" ")
+
+        deltas = {"hour": 0, "minute": 0, "day": 0}
+        deltas[parts[1].strip("s")] = int(parts(0))
+
+        return datetime.now(tz=UTC) - timedelta(days=deltas["day"], hours=deltas["hour"], minutes=deltas["minute"])
+
+    def parse_number_text(self, x) -> int:
+        if "k" in x:
+            return int(1000*float(x[:-1]))
+
+        return int(x)
+
+    def get_upvotes(self, x: bs4.Tag) -> InternetContent: 
+        upvotes_button = x.select("[data-click-id=\"upvote\"]")
+        if not upvotes_button:
+            return 0
+
+        upvote_text = upvotes_button[0].next_element.get_text()
+        if not upvote_text:
+            return 0
+        return self.parse_number_text(upvote_text)
+
+    def convertItemPost(self, x: bs4.Tag) -> InternetContent:
+        title = x.find("h3")
+        url = x.select("[data-testid=\"outbound-link\"]")[0]
+
+        return InternetContent(
+            id=str(url),
+            timestamp= datetime.today(), # Does not have time 
+            title= title.get_text().strip(),
+            url=url,
+            content_type=self.getContentId(),
+            content={
+                "comments": self.get_comments(x),
+                "upvotes": self.get_upvotes(x),
+            }
+        )
 
 class ProductHuntContentProvider(InternetContentProvider):
 

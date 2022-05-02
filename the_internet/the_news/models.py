@@ -5,6 +5,7 @@ class ContentLocation(models.TextChoices):
     HACKER_NEWS_NEWS = 'HN_N', _('Hacker News')
     INDIE_HACKERS_POPULAR = 'IH_P', _('Indie Hackers')
     PRODUCT_HUNT_TODAY = "PH_T", _("Product Hunt")
+    REDDIT_CHANNEL_TODAY = "R_C_T", ("Reddit")
 
 class InternetLocation(models.Model):
     location_type = models.CharField(
