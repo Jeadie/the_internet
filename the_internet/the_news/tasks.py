@@ -1,11 +1,12 @@
 import json
 
 from celery.schedules import crontab
+from django.utils.timezone import make_aware
 
 from the_internet import celery_app
 from the_news.content_providers import get_internet_content
 
-from .models import InternetNews
+from .models import InternetLocation, InternetNews
 
 
 @celery_app.task(name="debug-task")
@@ -30,17 +31,18 @@ def add_internet_news() -> None:
     Async task to create InternetNews from various content providers.
     """
     news = get_internet_content()
-
     # TODO: use and create bulk create 
     for c in news:
         try:
             InternetNews.objects.get_or_create(id= c.id,
                 defaults = {
-                    "timestamp" : c.timestamp,
+                    "timestamp" : make_aware(c.timestamp),
                     "title" : c.title,
                     "url" : c.url,
+                    "location": InternetLocation.objects.filter(location_type=c.content_type).first(),
                     "additional_fields" : json.dumps(c.content)  
                 }
             )
+
         except Exception as e:
             print(f'Error: {e}')

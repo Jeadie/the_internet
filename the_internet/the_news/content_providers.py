@@ -39,8 +39,6 @@ def get_internet_content()-> List[InternetContent]:
 
         soup = bs4.BeautifulSoup(resp.content, "html.parser")
         result.extend(c.getContent(soup))
-
-    print("Results", result)
     return result
 
 
