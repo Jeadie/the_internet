@@ -205,7 +205,7 @@ class HackerNewsContentProvider(InternetContentProvider):
         }
 
         url = title_link.get('href')
-        if url[:8] != "item?id=":
+        if url[:8] == "item?id=":
             url = f"{self.getBaseWebsite()}/{url}"
 
         return InternetContent(
