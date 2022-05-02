@@ -39,7 +39,8 @@ def add_internet_news() -> None:
                     "timestamp" : make_aware(c.timestamp),
                     "title" : c.title,
                     "url" : c.url,
-                    "location": InternetLocation.objects.filter(location_type=c.content_type).first(),
+                    "description": c.content.get("description", None),
+                    "location": InternetLocation.objects.get_or_create(location_type=c.content_type)[0],
                     "additional_fields" : json.dumps(c.content)  
                 }
             )

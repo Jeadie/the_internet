@@ -5,7 +5,7 @@
 <body>
     {% if latest_news_list %}
     {% for news in latest_news_list %}
-    <article class="p-6 bg-white sm:p-8 rounded-xl ring ring-indigo-50">
+    <article class="p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-indigo-50">
         <div class="flex items-start">
       
           <div class="sm:ml-8">
@@ -17,9 +17,9 @@
               <a href="{{ news.url }}" class="hover:underline"> {{ news.title }} </a>
             </h2>
       
-            <!--  TODO: description -->
-            <!-- <p class="mt-1 text-sm text-gray-700"> </p> -->
-      
+            {% if news.description %}
+            <p class="mt-1 text-sm text-gray-700"> {{ news.description }} </p>
+            {% endif %}
             <div class="mt-4 sm:flex sm:items-center sm:gap-2">
               <div class="flex items-center text-gray-500">
                 <p class="ml-1 text-xs font-medium">{{ news.timestamp }}</p>

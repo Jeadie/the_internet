@@ -29,12 +29,11 @@ class InternetContent:
     content: Dict[str, object]
 
 
-def get_internet_content()-> List[InternetContent]:
+def get_internet_content() -> List[InternetContent]:
     result = []
-    for c in [HackerNewsContentProvider(), IndieHackerContentProvider()]:
+    for c in [ProductHuntContentProvider(), HackerNewsContentProvider(), IndieHackerContentProvider()]:
         resp = requests.get(c.getBaseWebsite())
         if resp.status_code != 200:
-
             continue
 
         soup = bs4.BeautifulSoup(resp.content, "html.parser")
@@ -49,7 +48,7 @@ class InternetContentProvider(object):
         """ Returns the website to GET that contains the internet content."""
         pass
 
-    def getContentId(self) -> str:
+    def getContentId(self) -> ContentId:
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
@@ -65,6 +64,52 @@ class InternetContentProvider(object):
         """
         pass
 
+class ProductHuntContentProvider(InternetContentProvider):
+
+    def getBaseWebsite(self) -> str:
+        return "https://www.producthunt.com"
+
+    def getContentId(self) -> ContentId:
+        return ContentLocation.PRODUCT_HUNT_TODAY
+
+    def getContent(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
+        # The current day is section-0
+        contentList = page.select("[data-test=\"homepage-section-0\"]")[0]
+
+        items = contentList.select("[data-test^=\"post-item-\"]")
+        return list(map(lambda x: self.convertItemPost(x), items))
+
+    def get_upvotes(self, x: bs4.Tag) -> int:
+        upvote_tag = x.select("[data-test='vote-button']")[0]
+        if upvote_tag:
+            return int(upvote_tag.findChildren("div" , recursive=False)[0].findChildren("div" , recursive=False)[-1].get_text())
+        else:
+            return 0
+
+    def get_comments(self, x: bs4.Tag) -> int:
+        comment_icon = x.select("[viewBox=\"0 0 13 13\"]")
+        if comment_icon:
+            comments = comment_icon[0].next_sibling.get_text().strip()
+            if comments:
+                return int(comments)
+        
+        return 0
+
+    def convertItemPost(self, x: bs4.Tag) -> InternetContent:
+        title_tag = x.select("[data-test^=\"post-name-\"]")[0]
+        url = self.getBaseWebsite() + title_tag.get("href")
+        return InternetContent(
+            id=str(hash(url)),
+            timestamp= datetime.today(), # Does not have time 
+            title= title_tag.get_text().strip(),
+            url=url,
+            content_type=self.getContentId(),
+            content={
+                "description": x.select("[data-test*='tagline'][data-test*='post']")[0].get_text(),
+                "comments": self.get_comments(x),
+                "upvotes": self.get_upvotes(x),
+            }
+        )
 
 class IndieHackerContentProvider(InternetContentProvider):
 
