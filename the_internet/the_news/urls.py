@@ -9,7 +9,7 @@ if settings.DEBUG:
 else:
     router = routers.SimpleRouter()
     
-router.register("", InternetNewsViewSet)
+router.register("news", InternetNewsViewSet)
 router.register("locations", InternetLocationViewSet)
 
 urlpatterns = [
