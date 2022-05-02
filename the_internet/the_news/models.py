@@ -20,6 +20,10 @@ class InternetNews(models.Model):
     url = models.URLField()
     location = models.ForeignKey(InternetLocation, null=True, on_delete=models.SET_NULL)
 
+    description = models.TextField(max_length=1024, null=True, blank=True)
+    image_src = models.URLField(null=True, blank=True)
+
+    upvotes = models.IntegerField(default=0)
+    comments = models.IntegerField(default=0)
+
     additional_fields = models.JSONField()
-    description = models.TextField(max_length=1024, null=True)
-    image_src = models.URLField(null=True)

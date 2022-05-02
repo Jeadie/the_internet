@@ -31,8 +31,8 @@
                   <!-- upvotes -->
                   {% load custom_tags %}
                   {% with news.additional_fields|jsonify as additional_fields %}
-                Comments <a class="underline hover:text-gray-700">{{ additional_fields.comments }}</a>, <!-- comments -->
-                Upvotes <a class="underline hover:text-gray-700">{{ additional_fields.upvotes }}</a>, <!-- upvotes -->
+                Comments <a class="underline hover:text-gray-700">{{ news.comments }}</a>, <!-- comments -->
+                Upvotes <a class="underline hover:text-gray-700">{{ news.upvotes }}</a>, <!-- upvotes -->
                 {% endwith %}
 
               </p>

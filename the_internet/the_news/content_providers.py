@@ -99,7 +99,7 @@ class ProductHuntContentProvider(InternetContentProvider):
         title_tag = x.select("[data-test^=\"post-name-\"]")[0]
         url = self.getBaseWebsite() + title_tag.get("href")
         return InternetContent(
-            id=str(hash(url)),
+            id=str(url),
             timestamp= datetime.today(), # Does not have time 
             title= title_tag.get_text().strip(),
             url=url,
@@ -156,7 +156,7 @@ class IndieHackerContentProvider(InternetContentProvider):
         url = self.getBaseWebsite() + title_link.get('href')
 
         return InternetContent(
-            str(hash(url)),
+            str(url),
             self.getTimestamp(x),
             title_link.get_text().strip(),
             url,
@@ -205,9 +205,11 @@ class HackerNewsContentProvider(InternetContentProvider):
         }
 
         url = title_link.get('href')
+        if url[:8] != "item?id=":
+            url = f"{self.getBaseWebsite()}/{url}"
 
         return InternetContent(
-            str(hash(url)),
+            str(url),
             self.getTimestamp(score_metadata),
             title_link.get_text().strip(),
             url,

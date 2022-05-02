@@ -41,7 +41,9 @@ def add_internet_news() -> None:
                     "url" : c.url,
                     "description": c.content.get("description", None),
                     "location": InternetLocation.objects.get_or_create(location_type=c.content_type)[0],
-                    "additional_fields" : json.dumps(c.content)  
+                    "additional_fields" : json.dumps(c.content),
+                    "upvotes": c.content.get("upvotes", 0),
+                    "comments": c.content.get("comments", 0)
                 }
             )
 
