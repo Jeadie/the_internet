@@ -3,9 +3,20 @@
         <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     </head>
 <body>
+
+    <div class="max-w-xl mx-auto text-center">
+        <h1 class="text-3xl font-extrabold sm:text-5xl">
+          The Internet
+        </h1>
+        <p class="mt-4 sm:leading-relaxed sm:text-xl">
+            The entire internet in one place.
+          </p>
+    </div>
+
     {% if latest_news_list %}
+    <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
     {% for news in latest_news_list %}
-    <article class="p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-indigo-50">
+    <article class="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-indigo-50 hover:bg-indigo-50">
         <div class="flex items-start">
       
           <div class="sm:ml-8">
@@ -28,23 +39,20 @@
               <span class="hidden sm:block" aria-hidden="true">&middot;</span>
       
               <p class="mt-2 text-xs font-medium text-gray-500 sm:mt-0">
-                  <!-- upvotes -->
-                  {% load custom_tags %}
-                  {% with news.additional_fields|jsonify as additional_fields %}
-                Comments <a class="underline hover:text-gray-700">{{ news.comments }}</a>, <!-- comments -->
-                Upvotes <a class="underline hover:text-gray-700">{{ news.upvotes }}</a>, <!-- upvotes -->
-                {% endwith %}
-
+                Comments <a>{{ news.comments }}</a>,
+                Upvotes <a >{{ news.upvotes }}</a>,
               </p>
             </div>
           </div>
         </div>
-      </article>
-      
+    </article>
+    
     {% endfor %}
-{% else %}
-    <p>No news for you.</p>
-{% endif %}
+    </div>
+
+    {% else %}
+        <p>No news for you.</p>
+    {% endif %}
 
 </body>
 </html>
