@@ -19,7 +19,7 @@ class InternetNewsIndexView(generic.ListView):
     context_object_name = 'latest_news_list'
 
     def get_queryset(self):
-        return InternetNews.objects.order_by('-timestamp')
+        return InternetNews.objects.order_by('-additional_fields__upvotes')
 
 
 class InternetNewsRestViewSet(viewsets.ModelViewSet):

@@ -1,8 +1,9 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 class ContentLocation(models.TextChoices):
-    HACKER_NEWS_NEWS = 'HN_N', ('HackerNews_News')
-    INDIE_HACKERS_POPULAR = 'IH_P', ('IndieHacker_PopularPosts')
+    HACKER_NEWS_NEWS = 'HN_N', _('Hacker News')
+    INDIE_HACKERS_POPULAR = 'IH_P', _('Indie Hackers')
 
 class InternetLocation(models.Model):
     location_type = models.CharField(

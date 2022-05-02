@@ -1,9 +1,50 @@
-{% if latest_news_list %}
-    <ul>
+<html>
+    <head>
+        <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    </head>
+<body>
+    {% if latest_news_list %}
     {% for news in latest_news_list %}
-        <li><a href="{{news.url}}">{{ news.title}}</a></li>
+    <article class="p-6 bg-white sm:p-8 rounded-xl ring ring-indigo-50">
+        <div class="flex items-start">
+      
+          <div class="sm:ml-8">
+            <strong class="rounded border border-indigo-500 bg-indigo-500 px-3 py-1.5 text-[10px] font-medium text-white">
+              {{ news.location.get_location_type_display }}
+            </strong>
+      
+            <h2 class="mt-4 text-lg font-medium sm:text-xl">
+              <a href="{{ news.url }}" class="hover:underline"> {{ news.title }} </a>
+            </h2>
+      
+            <!--  TODO: description -->
+            <!-- <p class="mt-1 text-sm text-gray-700"> </p> -->
+      
+            <div class="mt-4 sm:flex sm:items-center sm:gap-2">
+              <div class="flex items-center text-gray-500">
+                <p class="ml-1 text-xs font-medium">{{ news.timestamp }}</p>
+              </div>
+      
+              <span class="hidden sm:block" aria-hidden="true">&middot;</span>
+      
+              <p class="mt-2 text-xs font-medium text-gray-500 sm:mt-0">
+                  <!-- upvotes -->
+                  {% load custom_tags %}
+                  {% with news.additional_fields|jsonify as additional_fields %}
+                Comments <a class="underline hover:text-gray-700">{{ additional_fields.comments }}</a>, <!-- comments -->
+                Upvotes <a class="underline hover:text-gray-700">{{ additional_fields.upvotes }}</a>, <!-- upvotes -->
+                {% endwith %}
+
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+      
     {% endfor %}
-    </ul>
 {% else %}
     <p>No news for you.</p>
 {% endif %}
+
+</body>
+</html>
