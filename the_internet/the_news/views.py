@@ -1,17 +1,10 @@
 from datetime import datetime, timedelta
-import json
-from typing import List
 
-from django.shortcuts import render
-from django.http import HttpRequest
 from django.db.models import QuerySet
 from django.views import generic
-from rest_framework import permissions, serializers, viewsets
-from rest_framework.request import Request as DRFRequest
+from rest_framework import permissions, viewsets
 
 from .models import InternetLocation, InternetNews
-from the_internet import settings
-from .content_providers import InternetContent
 from .serializers import InternetNewsSerializer, InternetLocationSerializer
 
 
