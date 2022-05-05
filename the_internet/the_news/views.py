@@ -13,7 +13,7 @@ class InternetNewsIndexView(generic.ListView):
     template_name = 'templates/internet_news.html'
     context_object_name = 'latest_news_list'
 
-    url_month_mapping = {
+    url_month_mapping = {**{
         "jan": 1,
         "feb": 2,
         "mar": 3,
@@ -26,12 +26,13 @@ class InternetNewsIndexView(generic.ListView):
         "oct": 10,
         "nov": 11,
         "dec": 12
-    } + dict(
+    }, **dict(
         [(str(i), i) for i in range(1,13)]
-    ) + dict(
+    ), **dict(
         [(f"0{i}", i) for i in range(1,10)]
-    )
+    )}
 
+    allowed_url_months = list(url_month_mapping.keys())
 
     def get_time_filtered_queryset(self) -> QuerySet:
         month, week, day = self.kwargs.get("month"), self.kwargs.get("week"), self.kwargs.get("day")
