@@ -13,13 +13,11 @@ else:
     
 router.register("news", InternetNewsRestViewSet)
 router.register("locations", InternetLocationRestViewSet)
-months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
 
 urlpatterns = [
     re_path('^(?P<week>[0-9]{1,2})', InternetNewsIndexView.as_view(), name='news_week'),
-    re_path(f'^(?P<month>({"|".join([x.lower() for x in months])}))/$', InternetNewsIndexView.as_view(), name='news_month'),
-    re_path(f'^(?P<month>({"|".join([x.lower() for x in months])}))/' + '(?P<week>[0-9]{1,2})/$', InternetNewsIndexView.as_view(), name='news_month_week'),
+    re_path(f'^(?P<month>({"|".join(InternetNewsIndexView.allowed_url_months)}))/$', InternetNewsIndexView.as_view(), name='news_month'),
+    re_path(f'^(?P<month>({"|".join(InternetNewsIndexView.allowed_url_months)}))/' + '(?P<day>[0-9]{1,2})/$', InternetNewsIndexView.as_view(), name='news_day'),
     path('', InternetNewsIndexView.as_view(), name='news_page'),
     path("", include(router.urls)),
 ]
