@@ -18,21 +18,16 @@ celery_app.conf.beat_schedule['add_internet_news'] = {
 def add_internet_news() -> None:
     """Async task to create InternetNews from various content providers. """
     news = get_internet_content()
-    # TODO: use and create bulk create 
-    for c in news:
-        try:
-            InternetNews.objects.get_or_create(id= c.id,
-                defaults = {
-                    "timestamp" : make_aware(c.timestamp),
-                    "title" : c.title,
-                    "url" : c.url,
-                    "description": c.content.get("description", None),
-                    "location": InternetLocation.objects.get_or_create(location_type=c.content_type)[0],
-                    "additional_fields" : json.dumps(c.content),
-                    "upvotes": c.content.get("upvotes", 0),
-                    "comments": c.content.get("comments", 0)
-                }
-            )
-
-        except Exception as e:
-            print(f'Error: {e}')
+    # TODO: use and create bulk create
+    for n in news:
+        InternetNews.objects.get_or_create(id= n.id, defaults = {
+                "timestamp" : make_aware(n.timestamp),
+                "title" : n.title,
+                "url" : n.url,
+                "description": n.content.get("description", None),
+                "location": InternetLocation.objects.get_or_create(location_type=n.content_type).first(),
+                "additional_fields" : json.dumps(n.content),
+                "upvotes": n.content.get("upvotes", 0),
+                "comments": n.content.get("comments", 0)
+            }
+        )

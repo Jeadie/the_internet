@@ -35,38 +35,51 @@ class InternetNewsIndexView(generic.ListView):
     allowed_url_months = list(url_month_mapping.keys())
 
     def get_time_filtered_queryset(self) -> QuerySet:
+        """ Creates a queryset, filtered by timestamp (base on the url parameter options/url view). Options are:
+            1. news_week: Week of the year, 1-52
+            2. news_day: single, specific day
+            3. news_month: A whole month.
+            If no **kwargs are present to create one of the above options, queryset contains all InternetNews.
+        """
         month, week, day = self.kwargs.get("month"), self.kwargs.get("week"), self.kwargs.get("day")
-        if week and not month: 
+        if week and not month:
             # news_week url
             start = datetime.strptime(f"{datetime.now().year} {week} 1", "%Y %W %w")
             return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start + timedelta(days=7))
 
-        elif month and day:
-            # news_day url 
-            start = datetime.strptime(f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} {day}", "%Y %m %d")
+        # news_day url
+        if month and day:
+            start = datetime.strptime(
+                f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} {day}", "%Y %m %d"
+            )
             return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start + timedelta(days=1))
-        elif month:
-            # news_month url
-            start = datetime.strptime(f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} 01", "%Y %m %d")
+
+        # news_month url
+        if month:
+            start = datetime.strptime(
+                f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} 01", "%Y %m %d"
+            )
             return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start.replace(month=start.month+1))
-        else:
-            # news_page url
-            return InternetNews.objects.all()
+
+        # news_page url
+        return InternetNews.objects.all()
 
 
     def get_queryset(self):
-        qs = self.get_time_filtered_queryset()
+        queryset = self.get_time_filtered_queryset()
 
         # Random order queryset
-        return qs.order_by('?')
+        return queryset.order_by('?')
 
 
 class InternetNewsRestViewSet(viewsets.ModelViewSet):
+    """REST endpoints for basic CRUD operations on InternetNews"""
     queryset = InternetNews.objects.all()
     serializer_class = InternetNewsSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 class InternetLocationRestViewSet(viewsets.ModelViewSet):
+    """REST endpoints for basic CRUD operations on InternetLocation"""
     queryset = InternetLocation.objects.all()
     serializer_class = InternetLocationSerializer
     permission_classes = [permissions.IsAuthenticated]

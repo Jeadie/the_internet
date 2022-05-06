@@ -5,6 +5,7 @@ djangorestframework==3.13.1
 Markdown==3.3.6
 celery==5.2.6
 requests==2.27.1
+pylint==2.13.8
 django-timezone-field==4.2.3
 python-crontab==2.3.4
 django-celery-beat # Keep unversioned 
