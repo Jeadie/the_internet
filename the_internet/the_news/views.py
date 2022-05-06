@@ -38,17 +38,17 @@ class InternetNewsIndexView(generic.ListView):
         month, week, day = self.kwargs.get("month"), self.kwargs.get("week"), self.kwargs.get("day")
         if week and not month: 
             # news_week url
-            start = datetime.strptime(f"{datetime.now().year} {week} 1", "%Y %W %w"),
-            return InternetNews.objects.filter(timestamp__range=(start, start + timedelta(day=7)))
+            start = datetime.strptime(f"{datetime.now().year} {week} 1", "%Y %W %w")
+            return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start + timedelta(days=7))
 
         elif month and day:
             # news_day url 
-            start = datetime.strptime(f"{datetime.now().year} {month} {day}", "%Y %m %d")
-            return InternetNews.objects.filter(timestamp__range=(start, start + timedelta(day=1)))
+            start = datetime.strptime(f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} {day}", "%Y %m %d")
+            return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start + timedelta(days=1))
         elif month:
             # news_month url
-            start = datetime.strptime(f"{datetime.now().year} {month} 1", "%Y %m %d")
-            return InternetNews.objects.filter(timestamp__range=(start, start + timedelta(month=1)))
+            start = datetime.strptime(f"{datetime.now().year} {InternetNewsIndexView.url_month_mapping[month]} 01", "%Y %m %d")
+            return InternetNews.objects.filter(timestamp__gte=start, timestamp__lte=start.replace(month=start.month+1))
         else:
             # news_page url
             return InternetNews.objects.all()

@@ -8,6 +8,6 @@ celery -A the_internet beat -l INFO --scheduler django_celery_beat.schedulers:Da
 celery --app=the_internet worker > ../logs/celery-worker.log & 
 
 
-python manage.py runserver > ../logs/django-server & 
+# python manage.py runserver > ../logs/django-server & 
 
 echo "Everything happily running..."
