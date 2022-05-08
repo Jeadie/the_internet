@@ -30,15 +30,17 @@ ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
 # Application definition
 
 INSTALLED_APPS = [
-    'the_news.apps.TheNewsConfig',
     'django.contrib.admin',
-    'django.contrib.auth',
+    "django.contrib.auth",
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "rest_framework",
-    "django_celery_beat"
+    "django_celery_beat",
+
+    'the_people.apps.ThePeopleConfig',
+    'the_news.apps.TheNewsConfig'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +80,7 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'the_internet.wsgi.application'
-
+AUTH_USER_MODEL = 'the_people.User'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

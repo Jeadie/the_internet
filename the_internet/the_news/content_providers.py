@@ -6,7 +6,7 @@ import bs4
 from pytz import UTC
 import requests
 
-from .models import ContentLocation
+from the_news.models import ContentLocation
 
 @dataclass
 class InternetContent:

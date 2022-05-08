@@ -6,7 +6,7 @@ from django.utils.timezone import make_aware
 from the_internet import celery_app
 from the_news.content_providers import get_internet_content
 
-from .models import InternetLocation, InternetNews
+from the_news.models import InternetLocation, InternetNews
 
 celery_app.conf.beat_schedule['add_internet_news'] = {
         'task': 'add_internet_news',

@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from django.views import generic
 from rest_framework import permissions, viewsets
 
-from .models import InternetLocation, InternetNews
+from the_news.models import InternetLocation, InternetNews
 from .serializers import InternetNewsSerializer, InternetLocationSerializer
 
 

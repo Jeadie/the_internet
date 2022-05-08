@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from .models import InternetLocation, InternetNews
+from the_news.models import InternetLocation, InternetNews
 
 
 class InternetNewsListSerializer(serializers.ListSerializer):
