@@ -16,7 +16,10 @@ Including another URLconf
 from django.urls import include, path
 from django.contrib.auth import views as auth_views
 
+from the_people.views import signup
+
 urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='templates/login.html')),
+    path('signup/', signup, name="signup"),
     path('', include('django.contrib.auth.urls')),
 ]
