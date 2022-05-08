@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import bs4
 from pytz import UTC
 import requests
 
-from the_news.models import ContentLocation
 
 @dataclass
 class InternetContent:
@@ -15,36 +14,33 @@ class InternetContent:
     timestamp: datetime
     title: str
     url: str
-    content_type: ContentLocation
+    content_type: str
+    subtype: Union[str, None]
     content: Dict[str, object]
-
-def get_internet_content() -> List[InternetContent]:
-    """Gets content from all content providers.
-    TODO: Add request method and beautiful soup construction into class.
-    TODO: Add provders as parameter
-    """
-    result = []
-    for provider in [RedditChannelContentProvider("technology"), ProductHuntContentProvider(), HackerNewsContentProvider(), IndieHackerContentProvider()]:
-        resp = requests.get(provider.get_base_website())
-        if resp.status_code != 200:
-            continue
-
-        soup = bs4.BeautifulSoup(resp.content, "html.parser")
-        result.extend(provider.get_content(soup))
-    return result
 
 
 class InternetContentProvider:
     """ Provides a uniform interface for internet content to be collected from different locations."""
 
-    # TODO: move get_base_website and get_content_id as class parameters
+    def get_internet_content(self) -> List[InternetContent]:
+        resp = requests.get(self.get_base_website())
+        if resp.status_code != 200:
+            return []
+
+        soup = bs4.BeautifulSoup(resp.content, "html.parser")
+        return self.get_content(soup)
+
     def get_base_website(self) -> str:
         """ Returns the website to GET that contains the internet content."""
 
-    def get_content_id(self) -> ContentLocation:
+    def get_content_id(self) -> str:
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
+
+    def get_content_subtype(self) -> Union[str, None]:
+        """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
+        return None
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         """Parses the internet content from a website, as a BeautifulSoup object, and returns a list
@@ -65,11 +61,15 @@ class RedditChannelContentProvider(InternetContentProvider):
         """ Returns the website to GET that contains the internet content."""
         return f"https://www.reddit.com/r/{self.channel}/top/?t=day"
 
-    def get_content_id(self) -> ContentLocation:
+    def get_content_id(self) -> str:
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
-        return ContentLocation.REDDIT_CHANNEL_TODAY
+        return f"Reddit"
+
+    def get_content_subtype(self) -> str:
+        """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
+        return self.channel
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         """Parses the internet content from a website, as a BeautifulSoup object, and returns a list
@@ -131,7 +131,12 @@ class RedditChannelContentProvider(InternetContentProvider):
 
     def convert_item_post(self, x: bs4.Tag) -> InternetContent:
         title = x.find("h3")
-        url = x.select("[data-testid=\"outbound-link\"]")[0]
+        url_div = x.select("[data-testid=\"outbound-link\"]")[0]
+        url = url_div.get("href", None)
+
+        #  If no url, get reddit page link
+        if not url:
+            url = "https://www.reddit.com" + title.parent.parent.get('href')
 
         return InternetContent(
             id=str(url),
@@ -139,6 +144,7 @@ class RedditChannelContentProvider(InternetContentProvider):
             title= title.get_text().strip(),
             url=url,
             content_type=self.get_content_id(),
+            subtype=self.get_content_subtype(),
             content={
                 "comments": self.get_comments(x),
                 "upvotes": self.get_upvotes(x),
@@ -151,8 +157,11 @@ class ProductHuntContentProvider(InternetContentProvider):
     def get_base_website(self) -> str:
         return "https://www.producthunt.com"
 
-    def get_content_id(self) -> ContentLocation:
-        return ContentLocation.PRODUCT_HUNT_TODAY
+    def get_content_id(self) -> str:
+        return "Product Hunt"
+
+    def get_content_subtype(self) -> str:
+        return "today"
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         # The current day is section-0
@@ -185,6 +194,7 @@ class ProductHuntContentProvider(InternetContentProvider):
             title= title_tag.get_text().strip(),
             url=url,
             content_type=self.get_content_id(),
+            subtype=self.get_content_subtype(),
             content={
                 "description": x.select("[data-test*='tagline'][data-test*='post']")[0].get_text(),
                 "comments": self.get_comments(x),
@@ -198,8 +208,11 @@ class IndieHackerContentProvider(InternetContentProvider):
     def get_base_website(self) -> str:
         return "https://www.indiehackers.com"
 
-    def get_content_id(self) -> ContentLocation:
-        return ContentLocation.INDIE_HACKERS_POPULAR
+    def get_content_id(self) -> str:
+        return "Indie Hackers"
+
+    def get_content_subtype(self) -> str:
+        return "front-page"
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         content_list = page.find(
@@ -243,6 +256,7 @@ class IndieHackerContentProvider(InternetContentProvider):
             title_link.get_text().strip(),
             url,
             self.get_content_id(),
+            self.get_content_subtype(),
             content
         )
 
@@ -252,8 +266,8 @@ class HackerNewsContentProvider(InternetContentProvider):
     def get_base_website(self) -> str:
         return "https://news.ycombinator.com"
 
-    def get_content_id(self) -> ContentLocation:
-        return ContentLocation.HACKER_NEWS_NEWS
+    def get_content_id(self) -> str:
+        return "Hacker News"
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         """Get content iterable, process individually and return as InternetContent"""
@@ -296,6 +310,7 @@ class HackerNewsContentProvider(InternetContentProvider):
             title_link.get_text().strip(),
             url,
             self.get_content_id(),
+            self.get_content_subtype(),
             content
         )
 
@@ -331,3 +346,14 @@ class HackerNewsContentProvider(InternetContentProvider):
             return int(comments.split("\xa0")[0])
 
         return 0
+
+
+
+def get_all_internet_content(providers: List[InternetContentProvider]) -> List[InternetContent]:
+    """Gets content from all content providers."""
+    result = []
+    for provider in providers:
+        result.extend(
+            provider.get_internet_content()
+        )
+    return result
