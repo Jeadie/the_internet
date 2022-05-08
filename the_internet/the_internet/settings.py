@@ -58,7 +58,7 @@ ROOT_URLCONF = 'the_internet.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        "DIRS": [BASE_DIR / "the_internet", BASE_DIR / "the_news"] ,
+        "DIRS": [BASE_DIR / "the_internet", BASE_DIR / "the_news", BASE_DIR / "the_people" ] ,
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
