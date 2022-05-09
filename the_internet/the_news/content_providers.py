@@ -44,9 +44,9 @@ class InternetContentProvider:
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
 
-    def get_content_subtype(self) -> Union[str, None]:
+    def get_content_subtype(self) -> str:
         """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
-        return None
+        return ""
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         """Parses the internet content from a website, as a BeautifulSoup object, and returns a list
@@ -56,6 +56,7 @@ class InternetContentProvider:
         get_content is intended to isolate all the awkward, hard-coded random logic required in web
         scraping specific websites.
         """
+
 
 class AFRInternetContentProvider(InternetContentProvider):
     """ """
@@ -107,10 +108,10 @@ class AFRInternetContentProvider(InternetContentProvider):
 
         # Get Description
         description_tag = x.select("[data-pb-type=\"ab\"]")
-        if not description_tag[0]:
+        if not description_tag:
             description = ""
         else:
-            description = description_tag.get_text()
+            description = description_tag[0].get_text()
 
         return InternetContent(
             id=url,
