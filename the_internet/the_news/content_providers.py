@@ -33,6 +33,12 @@ class InternetContentProvider:
     def get_base_website(self) -> str:
         """ Returns the website to GET that contains the internet content."""
 
+    def get_value_from_select_tag(self, x: bs4.Tag, select_query: str, tag_key: str) -> str:
+        tag = x.select(select_query)
+        if not tag:
+            return ""
+        return tag[0].get(tag_key)
+
     def get_content_id(self) -> str:
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
@@ -51,8 +57,95 @@ class InternetContentProvider:
         scraping specific websites.
         """
 
+class AFRInternetContentProvider(InternetContentProvider):
+    """ """
+
+    def __init__(self, subpage="") -> None:
+        self.subtype = subpage
+
+    def get_base_website(self) -> str:
+        """ Returns the website to GET that contains the internet content."""
+        return f"https://www.afr.com/{self.subtype}"
+
+    def get_content_id(self) -> str:
+        """Returns the id for the content provider. Should not depend on the underlying content
+        (i.e may relate to the sub-characteristics of a website, but not the specific content.
+        """
+        return "Australian Financial Review"
+
+    def get_content_subtype(self) -> Union[str, None]:
+        """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
+        if not self.subtype:
+            return None
+        return self.subtype
+
+    def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
+        # [data-pb-type="st"]
+        stories = page.select("[data-pb-type=\"st\"]")
+        return list(map(lambda x: self.convert_item_post(x), stories))
+
+    def convert_item_post(self, x:bs4.Tag) -> InternetContent:
+        """Use data-testid="..." to know what details a story will have
+        
+            - "StoryTileBaseImageLed": first <h3><a> has link and title, <a,figure, picture, img (data-testid="Image-image")> has image.
+            - "StoryTileHeadline-h3":  first <h3><a> has link and title
+            - "StoryTileBase": <h3 (data-testid="StoryTileHeadline-h3"), a> has title and link. <p (data-pb-type="ab")> has description. <ul class="undefined"><li> inner text has timestamp. <img (data-testid="Image-image")> has image
+        """
+        h3_tag = x.select("[data-testid=\"StoryTileHeadline-h3\"]")[0]
+        link_tag = h3_tag.find("a")
+        title  = link_tag.get_text()
+        url = "https://www.afr.com" + link_tag.get("href")
+
+        image_url = self.get_value_from_select_tag(x, "[data-testid=\"Image-image\"]", "src")
+        
+        # Get timestamp
+        timestamp = datetime.today()
+
+        timestamp_tag = x.find("ul", class_="undefined")
+        if timestamp_tag:
+            timestamp = self.parse_timestamp(timestamp_tag.get_text())
+
+        # Get Description
+        description_tag = x.select("[data-pb-type=\"ab\"]")
+        if not description_tag[0]:
+            description = ""
+        else:
+            description = description_tag.get_text()
+
+        return InternetContent(
+            id=url,
+            timestamp= timestamp,
+            title= title.strip(),
+            url=url,
+            content_type=self.get_content_id(),
+            subtype=self.get_content_subtype(),
+            content={"img": image_url, "description": description}
+        )
+
+    def parse_timestamp(self, x: str) -> datetime:
+        # Some look like "Updated May 5, 2022"
+        if len(x) > 8 and x[:8] == "Updated ":
+            x = x[8:]
+
+        # "1 min ago", "23 mins ago"
+        if x == "1 min ago" or " mins ago" in x:
+            min = int(x.split(" ")[0])
+            return datetime.now() - timedelta(minutes=min)
+
+        # "1 hr ago" Does not appear "2 hrs ago" exists.
+        if x == "1 hr ago":
+            return datetime.now() - timedelta(hours=1)
+
+        try:
+            # "May 9, 2022"
+            return datetime.strptime(x, "%b %d, %Y")
+
+        except ValueError:
+            return datetime.now()
+
+
 class RedditChannelContentProvider(InternetContentProvider):
-    """ Provides a uniform interface for internet content to be collected from different locations."""
+    """ """
 
     def __init__(self, channel) -> None:
         self.channel = channel
