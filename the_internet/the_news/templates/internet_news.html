@@ -36,11 +36,18 @@
                 <p class="ml-1 text-xs font-medium">{{ news.timestamp }}</p>
               </div>
       
-              <span class="hidden sm:block" aria-hidden="true">&middot;</span>
-      
+              {% if news.comments > 0 or news.upvotes > 0 %}
+                <span class="hidden sm:block" aria-hidden="true">&middot;</span>
+              {% endif %}
+
               <p class="mt-2 text-xs font-medium text-gray-500 sm:mt-0">
-                Comments <a>{{ news.comments }}</a>,
-                Upvotes <a >{{ news.upvotes }}</a>,
+                {% if news.comments > 0 %}
+                  Comments <a>{{ news.comments }}</a>,
+                {% endif %}
+
+                {% if news.upvotes > 0 %}
+                  Upvotes <a >{{ news.upvotes }}</a>,
+                {% endif %}
               </p>
             </div>
           </div>
