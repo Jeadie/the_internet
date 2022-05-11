@@ -4,7 +4,10 @@ from the_people.models import User
 
 
 class UserCreationForm(BaseUserCreationForm):
+    # Use username variable to override main in BaseUserCreationForm
     username = UsernameField(label="Email address", widget=forms.TextInput(attrs={"autofocus": True}),  )
+
+    country_of_work = CountryField(blank=True)
 
     class Meta(BaseUserCreationForm.Meta):
         model = User

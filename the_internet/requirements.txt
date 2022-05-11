@@ -9,3 +9,4 @@ pylint==2.13.8
 django-timezone-field==4.2.3
 python-crontab==2.3.4
 django-celery-beat # Keep unversioned 
+django-countries==7.3.2

@@ -1,7 +1,6 @@
-from pyexpat import model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django.conf import settings
 
 class InternetLocation(models.Model):
     """
@@ -37,3 +36,9 @@ class InternetNews(models.Model):
     comments = models.IntegerField(default=0)
 
     additional_fields = models.JSONField()
+
+class UserNewsProfile(models.Model):
+    """A users relation/profile to the_news"""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    liked_internet_location_categories = models.ManyToManyField(InternetLocationCategory, blank=True)
+
