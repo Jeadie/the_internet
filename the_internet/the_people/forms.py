@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm, UsernameField
 from the_people.models import User
+from django_countries.fields import CountryField
 
 
 class UserCreationForm(BaseUserCreationForm):
