@@ -14,15 +14,15 @@ resource "aws_alb_target_group" "default-target-group" {
   protocol = "HTTP"
   vpc_id   = aws_vpc.production-vpc.id
 
-  # health_check {
-  #   path                = var.health_check_path
-  #   port                = "traffic-port"
-  #   healthy_threshold   = 5
-  #   unhealthy_threshold = 2
-  #   timeout             = 2
-  #   interval            = 5
-  #   matcher             = "200"
-  # }
+  health_check {
+    path                = var.health_check_path
+    port                = "traffic-port"
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout             = 2
+    interval            = 5
+    matcher             = "200"
+  }
 }
 
 # Listener (redirects traffic from the load balancer to the target group)

@@ -1,6 +1,6 @@
 [
   {
-    "name": "django-app",
+    "name": "the_internet",
     "image": "${docker_image_url_django}",
     "essential": true,
     "cpu": 10,
@@ -21,7 +21,7 @@
       },
       {
         "name": "DJANGO_SECRET_KEY",
-        "value": "${rds_db_name}"
+        "value": "${django_secret_key}"
       },
       {
         "name": "RDS_USERNAME",
@@ -34,6 +34,10 @@
       {
         "name": "RDS_HOSTNAME",
         "value": "${rds_hostname}"
+      },
+      {
+        "name": "STAGE",
+        "value": "${django_stage}"
       },
       {
         "name": "RDS_PORT",
@@ -49,9 +53,9 @@
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "/ecs/django-app",
+        "awslogs-group": "/ecs/the_internet",
         "awslogs-region": "${region}",
-        "awslogs-stream-prefix": "django-app-log-stream"
+        "awslogs-stream-prefix": "the_internet-log-stream"
       }
     }
   },
@@ -61,7 +65,7 @@
     "essential": true,
     "cpu": 10,
     "memory": 128,
-    "links": ["django-app"],
+    "links": ["the_internet"],
     "portMappings": [
       {
         "containerPort": 80,
