@@ -15,6 +15,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
+
+
+STAGE = os.environ.get("STAGE", "base")
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -48,6 +53,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'the_internet.middleware.HealthCheckMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -164,9 +170,11 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_IMPORTS=("the_internet", )
 
 
-stage = os.environ.get("STAGE", "base")
+HEALTH_CHECK_PATH_INFO = "/ping/"
+HEALTH_CHECK_HEALTHY_RESPONSE = "pong!"
 
-if stage == "production":
+
+if STAGE == "production":
     DEBUG=False
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
     ALLOWED_HOSTS = ["the-internet-server.eba-tasfmrba.us-east-1.elasticbeanstalk.com", "news.onceaday.fyi", "onceaday.fyi"]
