@@ -22,14 +22,16 @@ data "template_file" "app" {
     region                  = var.region
     rds_db_name             = var.rds_db_name
     rds_username            = var.rds_username
-    rds_password            = var.rds_password
+    rds_password            = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).rds_password
     rds_hostname            = aws_db_instance.production.address
+    django_secret_key       = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).django_secret_key
     allowed_hosts           = var.allowed_hosts
+    django_stage            = var.django_stage
   }
 }
 
 resource "aws_ecs_task_definition" "app" {
-  family                = "django-app"
+  family                = "the_internet"
   container_definitions = data.template_file.app.rendered
   depends_on            = [aws_db_instance.production]
 

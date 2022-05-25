@@ -84,6 +84,7 @@ variable "log_retention_in_days" {
 variable "ssh_pubkey_file" {
   description = "Path to an SSH public key"
   default     = "~/.ssh/id_rsa.pub"
+  sensitive = true
 }
 
 
@@ -112,9 +113,7 @@ variable "rds_db_name" {
 variable "rds_username" {
   description = "RDS database username"
   default     = "jeadie"
-}
-variable "rds_password" {
-  description = "RDS database password"
+  sensitive = true
 }
 variable "rds_instance_class" {
   description = "RDS instance type"
@@ -127,4 +126,9 @@ variable "rds_instance_class" {
 variable "certificate_arn" {
   description = "AWS Certificate Manager ARN for validated domain"
   default     = "arn:aws:acm:us-east-1:383495223751:certificate/1b2a9231-2bee-4375-8dd2-a44227a4dddb"
+}
+
+variable "django_stage" {
+  description = ""
+  default = "production"
 }

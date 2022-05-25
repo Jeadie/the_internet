@@ -7,7 +7,7 @@ resource "aws_db_instance" "production" {
   identifier              = "production"
   name                    = var.rds_db_name
   username                = var.rds_username
-  password                = var.rds_password
+  password                = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).rds_password
   port                    = "5432"
   engine                  = "postgres"
   engine_version          = "14.2"
