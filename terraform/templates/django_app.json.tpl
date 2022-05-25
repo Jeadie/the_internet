@@ -20,6 +20,10 @@
         "value": "${rds_db_name}"
       },
       {
+        "name": "DJANGO_SECRET_KEY",
+        "value": "${rds_db_name}"
+      },
+      {
         "name": "RDS_USERNAME",
         "value": "${rds_username}"
       },

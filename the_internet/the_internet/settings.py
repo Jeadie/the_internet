@@ -16,25 +16,23 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 
-
-STAGE = os.environ.get("STAGE", "base")
-
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+## Default maximum security
+DEBUG=False
+ALLOWED_HOSTS = []
+
+STAGE = os.environ.get("STAGE", "base")
+if STAGE == "production":
+    from the_internet.production_settings import *
+elif STAGE == "local":
+    from the_internet.local_settings import *
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h*(16ugbn%yv_$@02=%r_@-s1kcfbyzxdx)7=9okcyb9p#+7p-'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]
-# ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -91,17 +89,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'the_internet.wsgi.application'
 AUTH_USER_MODEL = 'the_people.User'
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -172,25 +159,3 @@ CELERY_IMPORTS=("the_internet", )
 
 HEALTH_CHECK_PATH_INFO = "/ping/"
 HEALTH_CHECK_HEALTHY_RESPONSE = "pong!"
-
-
-if STAGE == "production":
-    DEBUG=False
-    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
-    ALLOWED_HOSTS = ["the-internet-server.eba-tasfmrba.us-east-1.elasticbeanstalk.com", "news.onceaday.fyi", "onceaday.fyi"]
-    # ALLOWED_HOSTS = ["*"]
-
-    ROOT_URLCONF = 'the_internet.urls'
-
-
-    if 'RDS_HOSTNAME' in os.environ:
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ['RDS_DB_NAME'],
-                'USER': os.environ['RDS_USERNAME'],
-                'PASSWORD': os.environ['RDS_PASSWORD'],
-                'HOST': os.environ['RDS_HOSTNAME'],
-                'PORT': os.environ['RDS_PORT'],
-            }
-        }
