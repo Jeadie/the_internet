@@ -13,12 +13,25 @@
         "protocol": "tcp"
       }
     ],
-    "command": ["gunicorn", "-w", "3", "-b", ":8000", "the_internet.wsgi:application"],
+    "command": ["./run_server.sh", "8000"],
     "environment": [
+      {
+        "name": "DJANGO_SUPERUSER_USERNAME",
+        "value": "${django_superuser_username}"
+      },
+      {
+        "name": "DJANGO_SUPERUSER_PASSWORD",
+        "value": "${django_superuser_password}"
+      },
+      {
+        "name": "DJANGO_SUPERUSER_EMAIL",
+        "value": "${django_superuser_email}"
+      },    
       {
         "name": "RDS_DB_NAME",
         "value": "${rds_db_name}"
       },
+
       {
         "name": "DJANGO_SECRET_KEY",
         "value": "${django_secret_key}"
@@ -72,13 +85,7 @@
         "hostPort": 0,
         "protocol": "tcp"
       }
-    ],
-    "mountPoints": [
-      {
-        "containerPath": "/usr/src/app/staticfiles",
-        "sourceVolume": "static_volume"
-      }
-    ],
+    ]
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {

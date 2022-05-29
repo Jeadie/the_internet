@@ -20,13 +20,19 @@ data "template_file" "app" {
     docker_image_url_django = var.docker_image_url_django
     docker_image_url_nginx  = var.docker_image_url_nginx
     region                  = var.region
+    
     rds_db_name             = var.rds_db_name
     rds_username            = var.rds_username
     rds_password            = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).rds_password
     rds_hostname            = aws_db_instance.production.address
-    django_secret_key       = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).django_secret_key
+
     allowed_hosts           = var.allowed_hosts
+
     django_stage            = var.django_stage
+    django_superuser_username = var.django_superuser_username
+    django_superuser_password = var.django_superuser_password
+    django_secret_key       = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).django_secret_key
+    django_superuser_email    = var.django_superuser_email
   }
 }
 
