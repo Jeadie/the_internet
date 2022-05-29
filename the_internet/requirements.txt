@@ -12,3 +12,4 @@ django-celery-beat # Keep unversioned
 django-countries==7.3.2
 gunicorn==20.1.0
 psycopg2-binary==2.9.2
+whitenoise==6.1.0
