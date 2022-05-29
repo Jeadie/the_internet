@@ -1,6 +1,7 @@
 #!/bin/bash
 PORT=$1
-    
+
+echo $DJANGO_SUPERUSER_EMAIL
 echo "starting migrate"
 python manage.py migrate --settings "the_internet.settings"
 echo "Done migrate"
