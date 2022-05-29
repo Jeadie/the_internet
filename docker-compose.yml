@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_DB=the_internet
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
+    ports:
+      - "5432:5432"
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    expose:
+      - 6379
+
+  the_internet:
+    image: 383495223751.dkr.ecr.us-east-1.amazonaws.com/the_internet:latest
+    command: ./run_server.sh 8000
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    environment:
+      - STAGE=local
+      - DJANGO_SUPERUSER_USERNAME=onceaday
+      - DJANGO_SUPERUSER_PASSWORD=onceaday
+      - DJANGO_SUPERUSER_EMAIL=jackeadie@duck.com
+      - DB_HOST=db
+      - DB_NAME=the_internet
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - redis
+      - db
+
+  beat: 
+    container_name: beat
+    image: 383495223751.dkr.ecr.us-east-1.amazonaws.com/the_internet:latest
+    command: celery -A the_internet beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    environment:
+      - STAGE=local
+      - DJANGO_SUPERUSER_USERNAME=onceaday
+      - DJANGO_SUPERUSER_PASSWORD=onceaday
+      - DJANGO_SUPERUSER_EMAIL=jackeadie@duck.com
+      - DB_HOST=db
+      - DB_NAME=the_internet
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - the_internet
+
+  celery-worker: 
+    container_name: celery-worker
+    image: 383495223751.dkr.ecr.us-east-1.amazonaws.com/the_internet:latest
+    command: celery --app=the_internet worker
+    environment:
+      - STAGE=local
+      - DJANGO_SUPERUSER_USERNAME=onceaday
+      - DJANGO_SUPERUSER_PASSWORD=onceaday
+      - DJANGO_SUPERUSER_EMAIL=jackeadie@duck.com
+      - DB_HOST=db
+      - DB_NAME=the_internet
+      - DB_USER=postgres
+      - DB_PASS=supersecretpassword
+    depends_on:
+      - redis
+      - db
+
+  nginx:
+    image: 383495223751.dkr.ecr.us-east-1.amazonaws.com/nginx:latest
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+    ports:
+      - 1337:80
+    depends_on:
+      - the_internet
+    expose:
+      - 80
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
