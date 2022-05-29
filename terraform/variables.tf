@@ -132,3 +132,18 @@ variable "django_stage" {
   description = ""
   default = "production"
 }
+
+variable "django_superuser_username" {
+  description = "Username used by django.setting DJANGO_SUPERUSER_PASSWORD"
+  default = "jeadie"
+}
+variable "django_superuser_password" {
+  description = "Password used by django.setting DJANGO_SUPERUSER_PASSWORD"
+  default = "admin"
+  sensitive = true
+}
+variable "django_superuser_email" {
+  description = "Email used by django.setting DJANGO_SUPERUSER_EMAIL"
+  default = "jackeadie@duck.com"
+  sensitive = true
+}
