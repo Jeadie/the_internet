@@ -25,10 +25,24 @@ DEBUG=False
 ALLOWED_HOSTS = []
 
 STAGE = os.environ.get("STAGE", "base")
+print("STAGE", STAGE)
+
 if STAGE == "production":
+    print("In prod")
     from the_internet.production_settings import *
+
 elif STAGE == "local":
+    print("In local")
     from the_internet.local_settings import *
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3'
+        }
+    }
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -45,7 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "django_celery_beat",
-
     'the_people.apps.ThePeopleConfig',
     'the_news.apps.TheNewsConfig'
 ]
@@ -142,7 +155,7 @@ if USE_TZ:
 
 # See https://docs.celeryq.dev/en/stable/userguide/configuration.html
 # #std:setting-broker_url
-CELERY_BROKER_URL = "amqp://guest@localhost//" #'redis://localhost:6379/0'
+CELERY_BROKER_URL = "redis://redis:6379/0"
 # #std:setting-result_backend
 # CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 # #std:setting-accept_content
