@@ -2,11 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
-from django_countries.fields import CountryField
+# from django_countries.fields import CountryField
 
 class UserProfile(models.Model):
     """Profile details of a user unrelated to the authentication mechanism."""
-    country = CountryField(blank=True)
+    # country = CountryField(blank=True)
 
 class UserManager(BaseUserManager):
 
