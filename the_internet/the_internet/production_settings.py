@@ -13,10 +13,11 @@ import os
   - ALLOWED_HOSTS (Eventually)
 """
 
-DEBUG=False
+DEBUG=True
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # ALLOWED_HOSTS = ["the-internet-server.eba-tasfmrba.us-east-1.elasticbeanstalk.com", "news.onceaday.fyi", "onceaday.fyi"]
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://*", "http://*"]
 
 DATABASES = {
     'default': {

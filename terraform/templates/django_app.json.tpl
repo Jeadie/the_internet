@@ -85,7 +85,7 @@
         "hostPort": 0,
         "protocol": "tcp"
       }
-    ]
+    ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
