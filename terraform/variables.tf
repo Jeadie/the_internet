@@ -134,7 +134,7 @@ variable "django_stage" {
 }
 
 variable "django_superuser_username" {
-  description = "Username used by django.setting DJANGO_SUPERUSER_PASSWORD"
+  description = "Username used by django.setting DJANGO_SUPERUSER_USERNAME"
   default = "jeadie"
 }
 variable "django_superuser_password" {
