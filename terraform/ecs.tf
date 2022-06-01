@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "production" {
 }
 
 resource "aws_launch_configuration" "ecs" {
-  name                        = "${var.ecs_cluster_name}-cluster"
+  name                        = "${var.ecs_cluster_name}-cluster-config"
   image_id                    = lookup(var.amis, var.region)
   instance_type               = var.instance_type
   security_groups             = [aws_security_group.ecs.id]
