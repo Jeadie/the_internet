@@ -36,4 +36,9 @@ resource "aws_dynamodb_table" "internet_content" {
       name = "timestamp"
       type = "N"
     }
+
+     ttl {
+        enabled = true 
+        attribute_name = "expiresOn" 
+    }
 }
