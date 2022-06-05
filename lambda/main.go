@@ -9,8 +9,7 @@ import (
 )
 
 type PostEvent struct {
-	Url   string `json:"url"`
-	Title string `json:"title"`
+	content   []InternetContent `json:"content"`
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -30,15 +29,17 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	case "POST":
 		p := PostEvent{}
-
 		err := json.Unmarshal([]byte(request.Body), &p)
 		if err != nil {
-			body := "Error: Invalid JSON payload ||| " + fmt.Sprint(err) + " Body Obtained" + "||||" + request.Body
-			ApiResponse = events.APIGatewayProxyResponse{Body: body, StatusCode: 500}
-		} else {
-			body := "title: " + fmt.Sprint(p.Title) + " url: " + fmt.Sprint(p.Url)
-			ApiResponse = events.APIGatewayProxyResponse{Body: body, StatusCode: 200}
+			return events.APIGatewayProxyResponse{Body: fmt.Sprintf("Invalid POST payload: %w", err), StatusCode: 500}, nil
 		}
+		err = PostInternetContentFromToday(ctx, p.content)
+		if err != nil {
+			return events.APIGatewayProxyResponse{
+				Body: fmt.Sprintf("Could not save content. Error: %w", err),
+				StatusCode: 500}, nil
+		}
+		ApiResponse = events.APIGatewayProxyResponse{Body: "OK", StatusCode: 200}
 	}
 
 	return ApiResponse, nil
@@ -47,3 +48,4 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 func main() {
 	lambda.Start(handler)
 }
+
