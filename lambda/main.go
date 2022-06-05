@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -15,15 +14,19 @@ type PostEvent struct {
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+
 	ApiResponse := events.APIGatewayProxyResponse{}
 	switch request.HTTPMethod {
 	case "GET":
-		name := request.QueryStringParameters["name"]
-		if name != "" {
-			ApiResponse = events.APIGatewayProxyResponse{Body: "Hey " + name + " welcome! ", StatusCode: 200}
-		} else {
-			ApiResponse = events.APIGatewayProxyResponse{Body: "Error: What is your name?", StatusCode: 500}
+		content := GetInternetContentFromToday(ctx)
+		body, err := json.Marshal(content)
+
+		statusCode := 200
+		if err != nil {
+			statusCode = 500
 		}
+		ApiResponse = events.APIGatewayProxyResponse{Body: string(body), StatusCode: statusCode}
+
 
 	case "POST":
 		p := PostEvent{}
@@ -33,7 +36,8 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			body := "Error: Invalid JSON payload ||| " + fmt.Sprint(err) + " Body Obtained" + "||||" + request.Body
 			ApiResponse = events.APIGatewayProxyResponse{Body: body, StatusCode: 500}
 		} else {
-			ApiResponse = events.APIGatewayProxyResponse{Body: request.Body, StatusCode: 200}
+			body := "title: " + fmt.Sprint(p.Title) + " url: " + fmt.Sprint(p.Url)
+			ApiResponse = events.APIGatewayProxyResponse{Body: body, StatusCode: 200}
 		}
 	}
 
