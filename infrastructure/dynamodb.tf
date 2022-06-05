@@ -37,8 +37,8 @@ resource "aws_dynamodb_table" "internet_content" {
       type = "N"
     }
 
-     ttl {
-        enabled = true 
-        attribute_name = "expiresOn" 
-    }
+    #  ttl {
+    #     enabled = true 
+    #     attribute_name = "expiresOn" 
+    # }
 }
