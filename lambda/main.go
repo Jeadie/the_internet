@@ -9,7 +9,7 @@ import (
 )
 
 type PostEvent struct {
-	content   []InternetContent `json:"content"`
+	content []InternetContent `json:"content"`
 }
 
 func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -26,7 +26,6 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		}
 		ApiResponse = events.APIGatewayProxyResponse{Body: string(body), StatusCode: statusCode}
 
-
 	case "POST":
 		p := PostEvent{}
 		err := json.Unmarshal([]byte(request.Body), &p)
@@ -36,7 +35,7 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 		err = PostInternetContentFromToday(ctx, p.content)
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				Body: fmt.Sprintf("Could not save content. Error: %w", err),
+				Body:       fmt.Sprintf("Could not save content. Error: %w", err),
 				StatusCode: 500}, nil
 		}
 		ApiResponse = events.APIGatewayProxyResponse{Body: "OK", StatusCode: 200}
@@ -48,4 +47,3 @@ func handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 func main() {
 	lambda.Start(handler)
 }
-
