@@ -12,5 +12,5 @@ module "aws_static_website" {
   website-domain-redirect = "www.onceaday.link"
 
   # Don't redirect these domains to this static website (useful for beta.onceaday.link)
-  website-additional-domains = [api.onceaday.link]
+  website-additional-domains = ["api.onceaday.link"]
 }
