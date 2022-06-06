@@ -65,6 +65,15 @@ export default class App extends React.Component {
     this.content = JSON.parse('[{"url":"https://github.com/Jeadie","timestamp":1654067172097,"location":"Github","title":"Jack Eadie","description":"Software engineer at Amazon. Giving people groceries.","mainCategory":"Profile","upvotes":4,"comments":6,"imageSourceUrl":"https://avatars.githubusercontent.com/u/23766767?v=4"}]')
   }
 
+  // componentDidMount() {
+  //   fetch(ENDPOINT)
+  //   .then(res => res.json())
+  //   .then((data) => {
+  //     this.setState({ contacts: data })
+  //   })
+  //   .catch(console.log)
+  // }
+
   render() {
     return (
       <div className="App">
