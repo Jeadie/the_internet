@@ -5,7 +5,7 @@ resource "aws_db_subnet_group" "production" {
 
 resource "aws_db_instance" "production" {
   identifier              = "production"
-  name                    = var.rds_db_name
+  db_name                 = var.rds_db_name
   username                = var.rds_username
   password                = jsondecode(data.aws_secretsmanager_secret_version.secrets.secret_string).rds_password
   port                    = "5432"

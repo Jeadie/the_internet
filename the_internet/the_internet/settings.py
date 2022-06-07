@@ -35,6 +35,9 @@ elif STAGE == "local":
     print("In local")
     from the_internet.local_settings import *
 else:
+    DEBUG=True
+    SECRET_KEY = 'django-insecure-h*(16ugbn%yv_$@02=%r_@-s1kcfbyzxdx)7=9okcyb9p#+7p-'
+    ALLOWED_HOSTS = ["*"]
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
