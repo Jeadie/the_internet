@@ -57,29 +57,41 @@ function Content({ news }: ContentProps) {
   )
 }
 
-export default class App extends React.Component {
+interface IProps {
+
+}
+
+interface AppState {
   content: InternetContent[]
+}
+
+export default class App extends React.Component<IProps, AppState> {
+  // content: InternetContent[]
 
   constructor() {
     super({})
-    this.content = JSON.parse('[{"url":"https://github.com/Jeadie","timestamp":1654067172097,"location":"Github","title":"Jack Eadie","description":"Software engineer at Amazon. Giving people groceries.","mainCategory":"Profile","upvotes":4,"comments":6,"imageSourceUrl":"https://avatars.githubusercontent.com/u/23766767?v=4"}]')
+    this.state = {content: []}
   }
 
-  // componentDidMount() {
-  //   fetch(ENDPOINT)
-  //   .then(res => res.json())
-  //   .then((data) => {
-  //     this.setState({ contacts: data })
-  //   })
-  //   .catch(console.log)
-  // }
+  componentDidMount() {
+    fetch("https://api.onceaday.link/api")
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      console.log("this.content")
+      this.setState({content: data})
+      
+    })
+    .catch(err => console.log(err));
+  }
 
   render() {
+    const {content} = this.state
     return (
       <div className="App">
         <AppHeader/>
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
-          {this.content.map((c) => (
+          {content.map((c) => (
             <Content news={c} />
           ))}
         </div>
