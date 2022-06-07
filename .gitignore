@@ -1,2 +1,4 @@
 the_internet/db.sqlite3
 logs/*.log
+
+.idea/
