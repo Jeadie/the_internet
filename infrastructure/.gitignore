@@ -2,3 +2,9 @@
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+
+// Names of specific GO binaries (pre-zip)
+internet_content_lambda
+
+// Zip files are lambda binaries
+*.zip
