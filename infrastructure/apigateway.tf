@@ -1,3 +1,5 @@
+
+# TODO: add CORS on api gateway
 resource "aws_apigatewayv2_api" "backend" {
   name          = "backend"
   description   = "API for backend resources of the_internet" 
@@ -53,10 +55,12 @@ resource "aws_apigatewayv2_domain_name" "api_domain" {
   domain_name     = "api.onceaday.link"
 
   domain_name_configuration {
-    certificate_arn = "arn:aws:acm:us-east-1:383495223751:certificate/af929853-2e80-41c5-ad81-ca2dd8bd367a"
+    certificate_arn = aws_acm_certificate.wildcard_website.arn
     endpoint_type = "REGIONAL"
     security_policy = "TLS_1_2"
   }
+
+  depends_on = [aws_acm_certificate.wildcard_website]
 
 }
 
