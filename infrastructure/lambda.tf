@@ -29,7 +29,7 @@ data "archive_file" "internet_content_zip" {
 
 // IAM role for lambda
 resource "aws_iam_role" "lambda_role" {
-  name = "${local.internet_content_binary_filename}_role"
+  name = "${local.internet_content_binary_filename}_iam_role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
