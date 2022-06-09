@@ -22,7 +22,7 @@ resource "aws_lambda_function" "internet_content" {
 // Use terraform to Zip the Golang binary
 data "archive_file" "internet_content_zip" {
   type        = "zip"
-  source_file = local.internet_content_binary_filename
+  source_file = "../lambda/api/${local.internet_content_binary_filename}"
   output_path = "${local.internet_content_binary_filename}.zip"
   
 }
@@ -42,7 +42,6 @@ resource "aws_iam_role" "lambda_role" {
       }
     ]
   })
-  
 }
 
 // Basic Lambda permissions
