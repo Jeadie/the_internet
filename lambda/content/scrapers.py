@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Union
 
 import bs4
-from pytz import UTC
 import requests
 
 
