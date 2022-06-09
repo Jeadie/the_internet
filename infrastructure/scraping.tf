@@ -1,21 +1,31 @@
 locals {
   scrape_cron_schedule = "rate(1 day)" 
   lambda_name = "scraper.zip"
+  scape_lambda_directory = "../lambda/content/"
 }
 
-data "archive_file" "content_scraper_package" {  
-  type = "zip"  
-  source_dir = "../lambda/content/" 
-  output_path = local.lambda_name
+# data "archive_file" "content_scraper_package" {  
+#   type = "zip"  
+#   source_dir = local.scape_lambda_directory
+#   output_path = local.lambda_name
+# }
+
+resource "aws_lambda_layer_version" "content_scraper_dependencies" {
+  filename   = "${local.scape_lambda_directory}content_scraper_dependencies.zip"
+  layer_name = "content_scraper_dependencies"
+
+  compatible_runtimes = ["python3.9"]
+  source_code_hash = filebase64sha256("${local.scape_lambda_directory}content_scraper_dependencies.zip")
 }
 
 resource "aws_lambda_function" "content_scraper" {
     function_name = "content-scraper"
-    filename      = local.lambda_name
-    source_code_hash = data.archive_file.content_scraper_package.output_base64sha256
+    filename      = "${local.scape_lambda_directory}scraper.zip"
+    source_code_hash = filebase64sha256("${local.scape_lambda_directory}scraper.zip")
     role          = aws_iam_role.scraper_lambda_role.arn
     runtime       = "python3.9"
     handler       = "main.handler"
+    layers =  [aws_lambda_layer_version.content_scraper_dependencies.arn]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_invoke" {
