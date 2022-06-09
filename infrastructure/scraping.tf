@@ -1,5 +1,5 @@
 locals {
-  scrape_cron_schedule = "cron(0 0 * * * *)" 
+  scrape_cron_schedule = "rate(1 day)" 
   lambda_name = "scraper.zip"
 }
 
@@ -29,12 +29,14 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_invoke" {
 
 resource "aws_cloudwatch_event_rule" "web_scrape_cron_job" {
   name = "web-scrape-cron-job"
-  schedule_expression = "rate(50 minutes)"
+  schedule_expression = "rate(1 day)"
+  
 }
 
 resource "aws_cloudwatch_event_target" "invoke_lambda" {
   rule = aws_cloudwatch_event_rule.web_scrape_cron_job.name
   arn = aws_lambda_function.content_scraper.arn
+  
 }
 
 resource "aws_iam_role" "scraper_lambda_role" {

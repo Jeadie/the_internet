@@ -5,7 +5,13 @@ resource "aws_apigatewayv2_api" "backend" {
   description   = "API for backend resources of the_internet" 
   
   protocol_type = "HTTP"
-
+  cors_configuration {
+    allow_credentials = true
+    allow_headers = ["*"]
+    allow_methods = [ "GET", "HEAD", "OPTIONS" ]
+    allow_origins = [ "https://onceaday.link" ]
+    expose_headers = [ "etag" ]
+  }
 }
 
 resource "aws_apigatewayv2_stage" "default_backend" {
