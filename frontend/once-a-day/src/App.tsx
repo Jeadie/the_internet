@@ -77,8 +77,6 @@ export default class App extends React.Component<IProps, AppState> {
     fetch("https://api.onceaday.link/api")
     .then(response => response.json())
     .then(data => {
-      console.log(data)
-      console.log("this.content")
       this.setState({content: data})
       
     })
