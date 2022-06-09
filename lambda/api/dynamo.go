@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -66,13 +67,11 @@ func PostInternetContentFromToday(ctx context.Context, content []InternetContent
 		writes[i] = types.WriteRequest{PutRequest: c.ToPutRequest()}
 	}
 
-	ii, err := dao.BatchWriteItem(ctx, &dynamodb.BatchWriteItemInput{
+	_, err := dao.BatchWriteItem(ctx, &dynamodb.BatchWriteItemInput{
 		RequestItems: map[string][]types.WriteRequest{
 			"InternetContent": writes,
 		},
 	})
-	fmt.Println(ii)
-	fmt.Println(err)
 	return err
 }
 
@@ -81,8 +80,7 @@ func GetInternetContentFromToday(ctx context.Context) []InternetContent {
 	var content []InternetContent
 
 	expr, err := expression.NewBuilder().WithFilter(
-		// TODO: change to nano
-		expression.Name("timestamp").GreaterThanEqual(expression.Value(time.Now().Add(-7 * 24 * time.Hour).Unix()))).Build()
+		expression.Name("timestamp").GreaterThanEqual(expression.Value(time.Now().Add(-1 * 24 * time.Hour).Unix()))).Build()
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -101,11 +99,9 @@ func GetInternetContentFromToday(ctx context.Context) []InternetContent {
 		fmt.Println(err)
 		return content
 	}
-	fmt.Println("Query: ", q)
-
 	err = attributevalue.UnmarshalListOfMaps(q.Items, &content)
 	if err != nil {
-		log.Println(fmt.Sprintf("failed to unmarshal Dynamodb Scan Items, %v", err))
+		log.Printf("failed to unmarshal Dynamodb Scan Items, %v\n", err)
 		return content
 	}
 
