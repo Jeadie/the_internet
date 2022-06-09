@@ -76,7 +76,7 @@ class AFRInternetContentProvider(InternetContentProvider):
     def get_content_subtype(self) -> Union[str, None]:
         """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
         if not self.subtype:
-            return None
+            return "main"
         return self.subtype
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
