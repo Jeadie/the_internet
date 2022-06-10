@@ -26,6 +26,7 @@ resource "aws_lambda_function" "content_scraper" {
     runtime       = "python3.9"
     handler       = "main.handler"
     layers =  [aws_lambda_layer_version.content_scraper_dependencies.arn]
+    timeout = 15
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_invoke" {
