@@ -1,8 +1,9 @@
+from cmath import e
 import json
 from typing import Dict, List, Union
 
 import boto3
-from boto3.dynamodb import Table
+from botocore.exceptions import ClientError
 
 from scrapers import InternetContent
 
@@ -16,9 +17,14 @@ def batch_put_results(content: List[InternetContent], n=MAXIMUM_BATCH_SIZE_PUT_O
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table("InternetContent")
     for batch in batched_internet_content:
-        put_results(table, batch)
+        # TODO: More common error is `content` has duplicates
+        try:
+            put_results(table, batch)
+        except ClientError as e:
+            print(e)
 
-def put_results(table: Table, content: List[InternetContent]):
+
+def put_results(table, content: List[InternetContent]):
     """Sends a batch PUT request of InternetContent to the InternetContent DynamoDb table."""
     with table.batch_writer() as writer:
         for c in content:
