@@ -1,64 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { InternetContent } from './model';
-import { render } from '@testing-library/react';
-
-
-function AppHeader() {
-    return (
-      <div className="max-w-xl mx-auto text-center">
-        <h1 className="text-3xl font-extrabold sm:text-5xl">
-          The Internet
-        </h1>
-        <p className="mt-4 sm:leading-relaxed sm:text-xl">
-            The entire internet in one place.
-          </p>
-    </div>
-    )
-  }
-
-interface ContentProps {
-  news: InternetContent
-}
-
-
-function Content({ news }: ContentProps) {
-  return (
-    <article className="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-indigo-50 hover:bg-indigo-50">
-        <div className="flex items-start">
-      
-          <div className="sm:ml-8">
-            <strong className="rounded border border-indigo-500 bg-indigo-500 px-3 py-1.5 text-[10px] font-medium text-white">
-              { news.location }
-            </strong>
-      
-            <h2 className="mt-4 text-lg font-medium sm:text-xl">
-              <a href={news.url} className="hover:underline">  {news.title} </a>
-            </h2>
-      
-            <p aok-hidden={news.description!=""} className="mt-1 text-sm text-gray-700"> { news.description } </p>
-      
-            <div className="mt-4 sm:flex sm:items-center sm:gap-2">
-              <div className="flex items-center text-gray-500">
-                <p className="ml-1 text-xs font-medium">{ news.timestamp }</p>
-              </div>
-              <span aok-hidden={news.comments > 0 || news.upvotes > 0} className="hidden sm:block" aria-hidden="true">&middot;</span>
-              
-
-              <p className="mt-2 text-xs font-medium text-gray-500 sm:mt-0">
-                  Comments <a>{ news.comments } </a>,
-                  Upvotes <a >{ news.upvotes }</a>,
-              </p>
-            </div>
-          </div>
-          </div>
-    </article>
-  )
-}
+import { local_data } from './local_data';
+import { AppHeader } from './AppHeader';
+import { Table } from './Table';
 
 interface IProps {
-
+  isLocal: boolean
 }
 
 interface AppState {
@@ -66,21 +14,24 @@ interface AppState {
 }
 
 export default class App extends React.Component<IProps, AppState> {
-  // content: InternetContent[]
-
-  constructor() {
-    super({})
+  constructor(props: IProps) {
+    super(props)
     this.state = {content: []}
   }
 
   componentDidMount() {
-    fetch("https://api.onceaday.link/api")
-    .then(response => response.json())
-    .then(data => {
-      this.setState({content: data})
-      
-    })
-    .catch(err => console.log(err));
+    if (this.props.isLocal) {
+      this.setState({
+        content: JSON.parse(local_data)
+      })
+    } else {
+      fetch("https://api.onceaday.link/api")
+      .then(response => response.json())
+      .then(data => {
+        this.setState({content: data})
+      })
+      .catch(err => console.log(err));
+    }
   }
 
   render() {
@@ -88,12 +39,13 @@ export default class App extends React.Component<IProps, AppState> {
     return (
       <div className="App">
         <AppHeader/>
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
-          {content.map((c) => (
-            <Content news={c} />
-          ))}
+          <div className="py-2 bg-gray-100  flex flex-row">
+          <div className="xl:basis-1/6 lg:basis-1/6"></div>
+            <Table isLocal={this.props.isLocal}/>
+            <div className="xl:basis-1/6 lg:basis-1/6"></div>
+          </div>
+          
         </div>
-      </div>
     );
   }
 }

@@ -4,5 +4,5 @@ import App from './App';
 import { InternetContent } from './model';
 
 test('renders learn react link', () => {
-  render(<App />);
+  render(<App isLocal={true}/>);
 });

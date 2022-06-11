@@ -10,3 +10,8 @@ export interface InternetContent {
 	comments: number;
 	imageSourceURL: string;
 } 
+
+export function getInternetContentFilterKey(content: InternetContent): string {
+	const subkey = content.mainCategory != "" ? ` - ${content.mainCategory}` : ""
+	return `${content.location}${subkey}`
+}
