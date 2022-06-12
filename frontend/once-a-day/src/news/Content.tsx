@@ -8,11 +8,11 @@ interface ContentProps {
 
 export function Content({ news }: ContentProps) {
     return (
-        <article className="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-indigo-50 hover:bg-indigo-50">
+        <article className="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
             <div className="flex items-start">
         
             <div className="sm:ml-8">
-                <strong className="rounded border border-indigo-500 bg-indigo-500 px-3 py-1.5 text-[10px] font-medium text-white">
+                <strong className="rounded border border-test-500 bg-test-500 px-3 py-1.5 text-[10px] font-medium text-white">
                 { getInternetContentFilterKey(news) }
                 </strong>
         
