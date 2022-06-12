@@ -1,9 +1,18 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import Dict, List, Union
 
 import bs4
 import requests
+
+
+class ContentLocations(str, Enum):
+    AFR = "Australian Financial Review"
+    Reddit = "Reddit"
+    ProductHunt = "Product Hunt"
+    IndieHackers = "Indie Hackers"
+    HackerNews = "Hacker News"
 
 
 @dataclass
@@ -71,12 +80,12 @@ class AFRInternetContentProvider(InternetContentProvider):
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
-        return "Australian Financial Review"
+        return ContentLocations.AFR.value
 
     def get_content_subtype(self) -> Union[str, None]:
         """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
-        if not self.subtype:
-            return "main"
+        if (not self.subtype) or (self.subtype == "Front Page"):
+            return "Front Page"
         return self.subtype
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
@@ -158,7 +167,7 @@ class RedditChannelContentProvider(InternetContentProvider):
         """Returns the id for the content provider. Should not depend on the underlying content
         (i.e may relate to the sub-characteristics of a website, but not the specific content.
         """
-        return f"Reddit"
+        return ContentLocations.Reddit.value
 
     def get_content_subtype(self) -> str:
         """Returns the subtype of the InternetContent, if applicable. Subtype generally references a sub-context from an internet location."""
@@ -251,7 +260,7 @@ class ProductHuntContentProvider(InternetContentProvider):
         return "https://www.producthunt.com"
 
     def get_content_id(self) -> str:
-        return "Product Hunt"
+        return ContentLocations.ProductHunt.value
 
     def get_content_subtype(self) -> str:
         return "today"
@@ -302,7 +311,7 @@ class IndieHackerContentProvider(InternetContentProvider):
         return "https://www.indiehackers.com"
 
     def get_content_id(self) -> str:
-        return "Indie Hackers"
+        return ContentLocations.IndieHackers.value
 
     def get_content_subtype(self) -> str:
         return "front-page"
@@ -360,7 +369,7 @@ class HackerNewsContentProvider(InternetContentProvider):
         return "https://news.ycombinator.com"
 
     def get_content_id(self) -> str:
-        return "Hacker News"
+        return ContentLocations.HackerNews.value
 
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         """Get content iterable, process individually and return as InternetContent"""

@@ -42,4 +42,5 @@ def convert_internet_content(c: InternetContent) -> Dict[str, Union[str, int]]:
         "upvotes": c.content.get("upvotes", 0),
         "comments": c.content.get("comments", 0),
         "imageSourceUrl": c.content.get("img", ""),
+        "mainCategory": c.subtype
     }
