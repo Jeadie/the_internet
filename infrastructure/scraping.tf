@@ -4,12 +4,6 @@ locals {
   scape_lambda_directory = "../lambda/content/"
 }
 
-# data "archive_file" "content_scraper_package" {  
-#   type = "zip"  
-#   source_dir = local.scape_lambda_directory
-#   output_path = local.lambda_name
-# }
-
 resource "aws_lambda_layer_version" "content_scraper_dependencies" {
   filename   = "${local.scape_lambda_directory}content_scraper_dependencies.zip"
   layer_name = "content_scraper_dependencies"
@@ -40,8 +34,8 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_invoke" {
 
 resource "aws_cloudwatch_event_rule" "web_scrape_cron_job" {
   name = "web-scrape-cron-job"
-  schedule_expression = "rate(1 day)"
-  
+  // Schedule expression in UTC. 11pm daily AEST.
+  schedule_expression = "cron(0 13 * * ? *)"  
 }
 
 resource "aws_cloudwatch_event_target" "invoke_lambda" {
@@ -63,8 +57,7 @@ resource "aws_iam_role" "scraper_lambda_role" {
       }
       }
     ]
-  })
-  
+  })  
 }
 
 resource "aws_iam_role_policy_attachment" "scraper_lambda_policy" {
