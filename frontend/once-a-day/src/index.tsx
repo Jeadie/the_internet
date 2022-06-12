@@ -6,6 +6,7 @@ import {
   Route,
 } from "react-router-dom";
 import './index.css';
+import HomeApp from './home/HomeApp';
 import NewsApp from './news/NewsApp';
 import reportWebVitals from './reportWebVitals';
 
@@ -16,7 +17,7 @@ root.render(
   <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path= "/" element={<NewsApp isLocal={true} />}/>
+          <Route path= "/" element={<HomeApp/>}/>
           <Route path= "/news" element={<NewsApp isLocal={true} />}/>
         </Routes>
     </BrowserRouter>
