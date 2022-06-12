@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { InternetContent } from './model';
 import { local_data } from './local_data';
-import { AppHeader } from './AppHeader';
+import { NewsAppHeader } from './NewsAppHeader';
 import { Table } from './Table';
 
 interface IProps {
@@ -38,7 +38,7 @@ export default class NewsApp extends React.Component<IProps, NewsAppState> {
     const {content} = this.state
     return (
       <div className="App">
-        <AppHeader/>
+        <NewsAppHeader/>
           <div className="py-2 bg-gray-100  flex flex-row">
           <div className="xl:basis-1/6 lg:basis-1/6"></div>
             <Table isLocal={this.props.isLocal}/>

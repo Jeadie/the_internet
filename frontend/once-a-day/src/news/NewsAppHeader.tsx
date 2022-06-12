@@ -1,4 +1,4 @@
-export function AppHeader() {
+export function NewsAppHeader() {
     return (
       <div className="max-w-xl my-2 mx-auto text-center">
         <h1 className="text-3xl font-extrabold sm:text-5xl">

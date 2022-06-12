@@ -6,7 +6,7 @@ import {
   Route,
 } from "react-router-dom";
 import './index.css';
-import NewsApp from './NewsApp';
+import NewsApp from './news/NewsApp';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
