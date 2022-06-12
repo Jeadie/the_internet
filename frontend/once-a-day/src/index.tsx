@@ -1,7 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 import './index.css';
-import App from './App';
+import NewsApp from './NewsApp';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -9,7 +14,12 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <App isLocal={true} />
+      <BrowserRouter>
+        <Routes>
+          <Route path= "/" element={<NewsApp isLocal={true} />}/>
+          <Route path= "/news" element={<NewsApp isLocal={true} />}/>
+        </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

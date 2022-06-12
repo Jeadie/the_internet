@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import NewsApp from './NewsApp';
 import { InternetContent } from './model';
 
 test('renders learn react link', () => {
-  render(<App isLocal={true}/>);
+  render(<NewsApp isLocal={true}/>);
 });

@@ -9,11 +9,11 @@ interface IProps {
   isLocal: boolean
 }
 
-interface AppState {
+interface NewsAppState {
   content: InternetContent[]
 }
 
-export default class App extends React.Component<IProps, AppState> {
+export default class NewsApp extends React.Component<IProps, NewsAppState> {
   constructor(props: IProps) {
     super(props)
     this.state = {content: []}
