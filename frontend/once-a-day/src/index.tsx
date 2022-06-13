@@ -8,14 +8,14 @@ import {
 import './index.css';
 import HomeApp from './home/HomeApp';
 import NewsApp from './news/NewsApp';
-import { CreateAccount, Login } from "./home/Forms";
+import { CreateAccount, Login, SelectSubscription } from "./home/Forms";
 
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-const isLocal = false
+const isLocal = true
 root.render(
   <React.StrictMode>
       <BrowserRouter>
@@ -25,6 +25,7 @@ root.render(
           <Route path= "/news" element={<NewsApp isLocal={isLocal} />}/>
           <Route path= "/login" element={<Login />}/>
           <Route path= "/create-account" element={<CreateAccount/>}/> 
+          <Route path= "/subscription" element={<SelectSubscription/>}/> 
         </Routes>
     </BrowserRouter>
   </React.StrictMode>
