@@ -5,7 +5,7 @@ from typing import Dict, List, Union
 
 import bs4
 import requests
-
+import pytz
 
 class ContentLocations(str, Enum):
     AFR = "Australian Financial Review"
@@ -13,6 +13,18 @@ class ContentLocations(str, Enum):
     ProductHunt = "Product Hunt"
     IndieHackers = "Indie Hackers"
     HackerNews = "Hacker News"
+
+def catch_exceptions(exception_message: str):
+    """Wrap functions calls and block all exceptions. Use for unexpected HTML parsing errors."""
+    def inner(func):
+        def wrapper(*args):
+            try:
+                return func(*args)
+            except Exception as e:
+                print(exception_message)
+                print(f"Error: {e}")
+        return wrapper
+    return inner
 
 
 @dataclass
@@ -91,8 +103,9 @@ class AFRInternetContentProvider(InternetContentProvider):
     def get_content(self, page: bs4.BeautifulSoup) -> List[InternetContent]:
         # [data-pb-type="st"]
         stories = page.select("[data-pb-type=\"st\"]")
-        return list(map(lambda x: self.convert_item_post(x), stories))
+        return list(filter(lambda x: x is not None, map(self.convert_item_post, stories)))
 
+    @catch_exceptions("Failed to convert AFR content from HTML")
     def convert_item_post(self, x:bs4.Tag) -> InternetContent:
         """Use data-testid="..." to know what details a story will have
         
@@ -184,7 +197,8 @@ class RedditChannelContentProvider(InternetContentProvider):
         contents_list = page.select("[data-testid=\"post-container\"]")
         contents_list = filter(lambda x: len(x.find_all("span", text="promoted")) == 0, contents_list)
 
-        return list(map(lambda x: self.convert_item_post(x), contents_list))
+        return list(filter(lambda x: x is not None, map(self.convert_item_post, contents_list)))
+
 
     def get_comments(self, x: bs4.Tag) -> InternetContent:
         comments_box = x.select("[data-test-id=\"comments-page-link-num-comments\"]")
@@ -198,7 +212,7 @@ class RedditChannelContentProvider(InternetContentProvider):
     def parse_timestamp(self, x: bs4.Tag) -> datetime:
         timestamp_box = x.select("[data-testid=\"post_timestamp\"]")
         if not timestamp_box:
-            return datetime.now(tz=UTC)
+            return datetime.now(tz=pytz.UTC)
         # "3 days ago"
         # "14 hours ago"
         # "just now"
@@ -206,14 +220,14 @@ class RedditChannelContentProvider(InternetContentProvider):
         time_diff = timestamp_box[0].get_text()
 
         if time_diff == "just now":
-            return datetime.now(tz=UTC)
+            return datetime.now(tz=pytz.UTC)
 
         parts = time_diff.split(" ")
 
         deltas = {"hour": 0, "minute": 0, "day": 0}
         deltas[parts[1].strip("s")] = int(parts(0))
 
-        return datetime.now(tz=UTC) - timedelta(days=deltas["day"], hours=deltas["hour"], minutes=deltas["minute"])
+        return datetime.now(tz=pytz.UTC) - timedelta(days=deltas["day"], hours=deltas["hour"], minutes=deltas["minute"])
 
     def parse_number_text(self, x) -> int:
         if "k" in x:
@@ -231,6 +245,7 @@ class RedditChannelContentProvider(InternetContentProvider):
             return 0
         return self.parse_number_text(upvote_text)
 
+    @catch_exceptions(f"Failed to convert Reddit content from HTML")
     def convert_item_post(self, x: bs4.Tag) -> InternetContent:
         title = x.find("h3")
         url_div = x.select("[data-testid=\"outbound-link\"]")[0]
@@ -270,7 +285,7 @@ class ProductHuntContentProvider(InternetContentProvider):
         content_list = page.select("[data-test=\"homepage-section-0\"]")[0]
 
         items = content_list.select("[data-test^=\"post-item-\"]")
-        return list(map(lambda x: self.convert_item_post(x), items))
+        return list(filter(lambda x: x is not None, map(self.convert_item_post, items)))
 
     def get_upvotes(self, x: bs4.Tag) -> int:
         upvote_tag = x.select("[data-test='vote-button']")[0]
@@ -287,6 +302,7 @@ class ProductHuntContentProvider(InternetContentProvider):
                 return int(comments)
         return 0
 
+    @catch_exceptions(f"Failed to convert Product Hunt content from HTML")
     def convert_item_post(self, x: bs4.Tag) -> InternetContent:
         title_tag = x.select("[data-test^=\"post-name-\"]")[0]
         url = self.get_base_website() + title_tag.get("href")
@@ -323,7 +339,7 @@ class IndieHackerContentProvider(InternetContentProvider):
         items = content_list.find_all(
                 class_="feed-item--post"
             )
-        return list(map(lambda x: self.convert_item_post(x), items))
+        return list(filter(lambda x: x is not None, map(self.convert_item_post, items)))
 
     def get_timestamp(self, x:bs4.Tag) -> datetime:
         post_date = x.find("a", class_="feed-item__date")
@@ -338,7 +354,7 @@ class IndieHackerContentProvider(InternetContentProvider):
         # Indie hacker timestamp assumes it is current year
         return timestamp.replace(year= timestamp.now().year)
 
-
+    @catch_exceptions(f"Failed to convert IndieHacker content from HTML")
     def convert_item_post(self, x: bs4.Tag) -> Dict[str, object]:
         title_link = x.find("a", class_="feed-item__title-link")
         upvote_span = x.find("span", class_="feed-item__likes-count")
@@ -386,8 +402,10 @@ class HackerNewsContentProvider(InternetContentProvider):
 
             entries.append(self.convert_item_post(main_line, score_metadata))
 
-        return entries
 
+        return list(filter(lambda x: x is not None, entries))
+
+    @catch_exceptions(f"Failed to convert HackerNews content from HTML")
     def convert_item_post(self, main_line: bs4.Tag, score_metadata: bs4.Tag) -> Dict[str, object]:
         """ Converts a single post from HackerNews.
 
@@ -455,7 +473,9 @@ def get_all_internet_content(providers: List[InternetContentProvider]) -> List[I
     """Gets content from all content providers."""
     result = []
     for provider in providers:
-        result.extend(
-            provider.get_internet_content()
-        )
+        try:
+            result.extend(provider.get_internet_content())
+        except Exception as e:
+            print(f"Error occurred when getting content for {provider.get_content_id()}. Error: {e}")
+
     return result
