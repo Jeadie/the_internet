@@ -1,21 +1,3 @@
-
-# TODO: Use a better module, later
-# TODO: Need to add CORS policy to S3 bucket manually
-#  Module reference: https://registry.terraform.io/modules/cloudmaniac/static-website/aws/latest
-# module "aws_static_website" {
-#   source = "cloudmaniac/static-website/aws"
-
-#   # This is the domain as defined in Route53
-#   domains-zone-root       = "onceaday.link"
-
-#   # Domains used for CloudFront
-#   website-domain-main     = "onceaday.link"
-#   website-domain-redirect = "www.onceaday.link"
-
-#   # Don't redirect these domains to this static website (useful for beta.onceaday.link)
-#   website-additional-domains = ["api.onceaday.link"]
-# }
-
 provider "aws" {
   alias  = "us-east-1"
   region = "us-east-1"
@@ -36,7 +18,6 @@ locals {
 
   # Domains used for CloudFront
   website-domain-main     = "onceaday.link"
-  website-domain-redirect = "www.onceaday.link"
 }
  
 data "aws_route53_zone" "main" {
@@ -83,7 +64,6 @@ resource "aws_acm_certificate" "wildcard_website" {
 
 }
 
-# Get the ARN of the issued certificate
 data "aws_acm_certificate" "wildcard_website" {
   provider = aws.us-east-1
 
@@ -131,7 +111,7 @@ resource "aws_s3_bucket_website_configuration" "website_root" {
   }
 
   error_document {
-    key = "404.html"
+    key = "index.html"
   }
 }
 
@@ -197,13 +177,6 @@ resource "aws_s3_bucket" "website_logs" {
   }
 }
 
-# resource "aws_cloudfront_cache_policy" "website_cache_policy" {
-#   name = "${local.website-domain-main}-cache-policy"
-#   comment = "cache policy cloudfront -> S3 ${local.website-domain-main}"
-#   # allowed_headers
-
-# }
-
 resource "aws_cloudfront_distribution" "website_cdn_root" {
   enabled     = true
   price_class = "PriceClass_All"
@@ -236,9 +209,8 @@ resource "aws_cloudfront_distribution" "website_cdn_root" {
     default_ttl      = "300"
     max_ttl          = "1200"
 
-    viewer_protocol_policy = "redirect-to-https" # Redirects any HTTP request to HTTPS
+    viewer_protocol_policy = "redirect-to-https"
     compress               = true
-    # cache_policy_id = aws_cloudfront_cache_policy.website_cache_policy.id
 
     forwarded_values {
       query_string = false
