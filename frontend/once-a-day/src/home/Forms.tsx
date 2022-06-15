@@ -2,8 +2,10 @@ import { ReactNode } from "react"
 import { useNavigate } from "react-router-dom";
 
 import { AuthenticationForm, PlanPricingCard } from "./FormFields"
+import UserAPI from "./UserAPI";
 
 export function CreateAccount() {
+    let navigate = useNavigate();
     return AuthenticationForm(
         "Get Started Today!",
         "We promise to get you right back to the news",
@@ -11,7 +13,12 @@ export function CreateAccount() {
         "Sign up",
         <p className="text-sm text-center text-gray-500">{"Have an account? "}
             <a className="underline" href="/login">Log in</a>
-        </p>
+        </p>,
+        (input) => {
+            UserAPI.createAccount(input["email"], input["password"])
+            // TODO: navigate on createAccount success, otherwise display error.
+            navigate("/subscription");
+        }
     )
 }
 
@@ -23,7 +30,10 @@ export function Login() {
         "Sign in",
         <p className="text-sm text-center text-gray-500">{"No account? "}
             <a className="underline" href="/create-account">Sign up</a>
-        </p>
+        </p>,
+        (input) => {
+            UserAPI.login(input["email"], input["password"])
+        }
     )
 }
 

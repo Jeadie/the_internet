@@ -1,6 +1,7 @@
-import { ReactNode } from "react"
+import { FormEventHandler } from "react"
+import { ReactNode, useState } from "react"
 
-export function EmailInput() {
+export function EmailInput(onChange: FormEventHandler) {
     return (
         <div>
         <label htmlFor="email" className="text-sm font-medium">Email</label>
@@ -12,6 +13,7 @@ export function EmailInput() {
             id="email"
             className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
             placeholder="Enter email"
+            onChange={onChange}
           />
 
           <span className="absolute inset-y-0 inline-flex items-center right-4">
@@ -23,9 +25,9 @@ export function EmailInput() {
               stroke="currentColor"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
                 d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
               />
             </svg>
@@ -35,20 +37,23 @@ export function EmailInput() {
     )
 }
 
-export function PasswordInput() {
+export function PasswordInput(onChange: FormEventHandler) {
+    let [isPasswordType, setIsPasswordType] = useState(true)
+
     return (
       <div>
       <label htmlFor="password" className="text-sm font-medium">Password</label>
       <div className="relative mt-1">
         <input
-          type="password"
+          type={isPasswordType ? "password": "text"}
           id="password"
           className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
           placeholder="Enter password"
+          onChange={onChange}
         />
 
       {/* TODO: Add click handler to toggle between type=password/text above */}
-        <span className="absolute inset-y-0 inline-flex items-center right-4">
+        <span className="absolute inset-y-0 inline-flex items-center right-4" onClick={() => {setIsPasswordType(!isPasswordType)}}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-5 h-5 text-test-400"
@@ -57,15 +62,15 @@ export function PasswordInput() {
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
             />
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
             />
           </svg>
@@ -75,7 +80,20 @@ export function PasswordInput() {
     )
 }
 
-export function AuthenticationForm(title: string, description: string, formTitle: string, submitButtonText: string, redirectNode: ReactNode ) {
+export function AuthenticationForm(title: string, description: string, formTitle: string, submitButtonText: string, redirectNode: ReactNode, onSubmit: (inputs: Record<string, string>) => void) {
+  let [state, setState] = useState({})
+
+  const inputOnChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setState({
+      // Order is important. Override current state with new update.
+      ...state,
+      [e.currentTarget.id]: e.currentTarget.value,
+    });
+  };
+
+  const emailInput = EmailInput(inputOnChange)
+  const passwordInput = PasswordInput(inputOnChange)
+  
     return (
         <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
             <div className="max-w-lg mx-auto">
@@ -83,10 +101,10 @@ export function AuthenticationForm(title: string, description: string, formTitle
 
                 <p className="max-w-md mx-auto mt-4 text-center text-grey-500">{description}</p>
 
-                <form action="" className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
+                <form onSubmit={(e => {onSubmit(state)})} className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
                     <p className="text-lg font-medium">{formTitle}</p>
-                    <EmailInput/>
-                    <PasswordInput/>
+                    {emailInput}
+                    {passwordInput}
                     <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
                         {submitButtonText}
                     </button>
@@ -135,11 +153,11 @@ function PricingPlaninclusion(inclusionDescription: string) {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                stroke-width="2"
+                strokeWidth="2"
             >
                 <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="M5 13l4 4L19 7"
                 />
             </svg>

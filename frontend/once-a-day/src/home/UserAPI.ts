@@ -1,0 +1,46 @@
+import {
+	CognitoUserPool,
+	CognitoUserAttribute,
+	CognitoUser,
+} from 'amazon-cognito-identity-js';
+
+var poolData = {
+	UserPoolId: 'us-east-1_UT3yIKEIo', // TODO
+	ClientId: '7cuqpu6g3ho18sg0v6a4cfkjoj', // TODO
+};
+
+class UserAPI {
+	private userPool: CognitoUserPool;
+
+    constructor(userPoolId: string, clientId: string) {
+        this.userPool = new CognitoUserPool({UserPoolId: userPoolId, ClientId: clientId});
+    }
+
+	createAccount(email: string, password: string) {
+		const attributeList = [
+			new CognitoUserAttribute({
+				Name: 'email',
+				Value: 'email@mydomain.com',
+			}),
+			new CognitoUserAttribute({
+				Name: 'subscription_type',
+				Value: "FREE"
+			})
+		]
+		this.userPool.signUp(email.replace("@", ""), password, attributeList, [], (err, result) => {
+			console.log(err)
+			console.log(result)
+		});
+	}
+
+	login(email: string, password: string) {
+		console.log(email)
+		console.log(password)
+	}
+
+	logout() {
+		this.userPool.getCurrentUser()?.signOut()
+	}
+}
+
+export default new UserAPI(poolData.UserPoolId, poolData.ClientId);
