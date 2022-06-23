@@ -10,6 +10,7 @@ module.exports = {
         test: colors.indigo,
         white: colors.white,
         grey: colors.grey,
+        red: colors.rose, 
     }
   },
   plugins: [],

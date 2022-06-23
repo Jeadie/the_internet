@@ -1,4 +1,4 @@
-import { FormEventHandler } from "react"
+import { FormEvent, FormEventHandler } from "react"
 import { ReactNode, useState } from "react"
 
 export function EmailInput(onChange: FormEventHandler) {
@@ -80,7 +80,7 @@ export function PasswordInput(onChange: FormEventHandler) {
     )
 }
 
-export function AuthenticationForm(title: string, description: string, formTitle: string, submitButtonText: string, redirectNode: ReactNode, onSubmit: (inputs: Record<string, string>) => void) {
+export function AuthenticationForm(title: string, description: string, formTitle: string, submitButtonText: string, redirectNode: ReactNode, errorMessage: string | undefined, onSubmit: (inputs: Record<string, string>) => void) {
   let [state, setState] = useState({})
 
   const inputOnChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -94,6 +94,8 @@ export function AuthenticationForm(title: string, description: string, formTitle
   const emailInput = EmailInput(inputOnChange)
   const passwordInput = PasswordInput(inputOnChange)
   
+
+  
     return (
         <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
             <div className="max-w-lg mx-auto">
@@ -101,13 +103,14 @@ export function AuthenticationForm(title: string, description: string, formTitle
 
                 <p className="max-w-md mx-auto mt-4 text-center text-grey-500">{description}</p>
 
-                <form onSubmit={(e => {onSubmit(state)})} className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
+                <form onSubmit={(e => {e.preventDefault(); onSubmit(state)})} className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
                     <p className="text-lg font-medium">{formTitle}</p>
                     {emailInput}
                     {passwordInput}
                     <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
                         {submitButtonText}
                     </button>
+                    {errorMessage && <p className="text-md text-center text-red-500">{errorMessage}</p>}
                     {redirectNode}
                 </form>
             </div>

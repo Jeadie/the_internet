@@ -37,9 +37,13 @@ class UserAPI {
 		});
 	}
 
-	login(email: string, password: string) {
-		console.log(email)
-		console.log(password)
+	login(email: string, password: string, onSuccess?: (user: CognitoUser) => void, onFailure?: (err: Error) => void) {
+		if (this.userPool.getCurrentUser() && onSuccess) {
+			onSuccess(this.userPool.getCurrentUser()!!)
+		}
+		if (!this.userPool.getCurrentUser() && onFailure) {
+			onFailure(Error("No user currently authenticated, somehow"))
+		}
 	}
 
 	logout() {
