@@ -5,6 +5,7 @@ import Select, { MultiValue, ActionMeta } from 'react-select';
 interface TableFilterProps {
   sources: string[]
   onChange: (v: string[]) => void;
+  isDisabled: boolean
 }
 
 interface TableFilterState {
@@ -45,6 +46,7 @@ export class TableFilter extends React.Component<TableFilterProps, TableFilterSt
         options={options}
         className="basic-multi-select"
         classNamePrefix="select"
+        isDisabled={this.props.isDisabled}
     />
     )
   }

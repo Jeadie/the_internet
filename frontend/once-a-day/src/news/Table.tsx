@@ -14,24 +14,31 @@ interface TableProps {
 interface TableState {
   content: InternetContent[]
   filters: string[]
+  showTableFilter: boolean
 }
 
 export class Table extends React.Component<TableProps, TableState> {
 constructor(props: TableProps) {
     super(props)
-    this.state = {content: [], filters: []}
+    this.state = {content: [], filters: [], showTableFilter: false}
   }
+
+
+  delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
   componentDidMount() {
     if (this.props.isLocal) {
-      this.setState({
-        content: JSON.parse(local_data)
+      this.delay(1000).then( () => {
+        this.setState({
+          content: JSON.parse(local_data),
+          showTableFilter: true
+        })
       })
     } else {
       fetch("https://api.onceaday.link/api")
       .then(response => response.json())
       .then(data => {
-        this.setState({content: data})
+        this.setState({content: data, showTableFilter: true})
       })
       .catch(err => console.log(err));
     }
@@ -61,11 +68,12 @@ constructor(props: TableProps) {
     return Array.from(new Set(this.state.content.map((c) => getInternetContentFilterKey(c))))
   }
 
+
   render() {
     const visibleContent = this.getVisibleContent(this.state)
     return (
         <div>
-            <TableFilter onChange={(values: string[]) => {this.setState({filters: values})}} sources={this.getFilterKeys(this.state)}/>
+          <TableFilter isDisabled={!this.state.showTableFilter} onChange={(values: string[]) => {this.setState({filters: values})}} sources={this.getFilterKeys(this.state)}/>
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
                 {visibleContent.map((c) => (<Content news={c} /> ))}
             </div>
