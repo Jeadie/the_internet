@@ -1,4 +1,4 @@
-import { CognitoUser } from "amazon-cognito-identity-js";
+import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
 import { ReactNode, useState } from "react"
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +43,7 @@ export function Login() {
         </p>,
         err_msg,
         (input) => {
-            UserAPI.login(input["email"], input["password"], (_: CognitoUser) => {navigate("/")}, (err: Error) => {set_err_msg(err.message)})
+            UserAPI.login(input["email"], input["password"], (_: CognitoUserSession) => {navigate("/")}, (err: Error) => {set_err_msg(err.message)})
         }
     )
 }

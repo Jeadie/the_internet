@@ -1,7 +1,9 @@
 import {
+	AuthenticationDetails,
 	CognitoUserPool,
 	CognitoUserAttribute,
 	CognitoUser,
+	CognitoUserSession
 } from 'amazon-cognito-identity-js';
 
 var poolData = {
@@ -17,17 +19,19 @@ class UserAPI {
     }
 
 	createAccount(email: string, password: string, onSuccess?: (user: CognitoUser) => void, onFailure?: (err: Error) => void) {
-		const attributeList = [
-			new CognitoUserAttribute({
-				Name: 'email',
-				Value: 'email@mydomain.com',
-			}),
-			new CognitoUserAttribute({
-				Name: 'subscription_type',
-				Value: "FREE"
-			})
-		]
-		this.userPool.signUp(email.replace("@", ""), password, attributeList, [], (err, result) => {
+		this.userPool.signUp(
+			this.createUsername(email),
+			password,
+			[
+				new CognitoUserAttribute({
+					Name: 'email',
+					Value: email,
+				}),
+				new CognitoUserAttribute({
+					Name: 'custom:subscription_type',
+					Value: "FREE"
+				})
+			], [], (err, result) => {
 			if (err && onFailure) {
 				onFailure(err!)
 			}
@@ -37,17 +41,27 @@ class UserAPI {
 		});
 	}
 
-	login(email: string, password: string, onSuccess?: (user: CognitoUser) => void, onFailure?: (err: Error) => void) {
-		if (this.userPool.getCurrentUser() && onSuccess) {
-			onSuccess(this.userPool.getCurrentUser()!!)
-		}
-		if (!this.userPool.getCurrentUser() && onFailure) {
-			onFailure(Error("No user currently authenticated, somehow"))
-		}
+	login(email: string, password: string, onSuccess?: (session: CognitoUserSession) => void, onFailure?: (err: Error) => void) {
+		var userData = {
+			Username: this.createUsername(email),
+			Pool: this.userPool,
+		};
+		var cognitoUser = new CognitoUser(userData);
+		cognitoUser.authenticateUser(new AuthenticationDetails({
+				Username: this.createUsername(email),
+				Password: password,
+			}), {
+			onSuccess: onSuccess ? onSuccess : () => {},
+			onFailure: onFailure ? onFailure: () => {}
+		});
 	}
 
 	logout() {
 		this.userPool.getCurrentUser()?.signOut()
+	}
+
+	createUsername(email: string): string {
+		return email.replace("@", "")
 	}
 }
 
