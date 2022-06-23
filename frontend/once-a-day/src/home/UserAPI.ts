@@ -16,7 +16,7 @@ class UserAPI {
         this.userPool = new CognitoUserPool({UserPoolId: userPoolId, ClientId: clientId});
     }
 
-	createAccount(email: string, password: string) {
+	createAccount(email: string, password: string, onSuccess?: (user: CognitoUser) => void, onFailure?: (err: Error) => void) {
 		const attributeList = [
 			new CognitoUserAttribute({
 				Name: 'email',
@@ -28,8 +28,12 @@ class UserAPI {
 			})
 		]
 		this.userPool.signUp(email.replace("@", ""), password, attributeList, [], (err, result) => {
-			console.log(err)
-			console.log(result)
+			if (err && onFailure) {
+				onFailure(err!)
+			}
+			if (!err && onSuccess) {
+				onSuccess(result?.user!)
+			}
 		});
 	}
 

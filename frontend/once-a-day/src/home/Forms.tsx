@@ -1,3 +1,4 @@
+import { CognitoUser } from "amazon-cognito-identity-js";
 import { ReactNode } from "react"
 import { useNavigate } from "react-router-dom";
 
@@ -15,9 +16,9 @@ export function CreateAccount() {
             <a className="underline" href="/login">Log in</a>
         </p>,
         (input) => {
-            UserAPI.createAccount(input["email"], input["password"])
-            // TODO: navigate on createAccount success, otherwise display error.
-            navigate("/subscription");
+            UserAPI.createAccount(
+                input["email"], input["password"], (_: CognitoUser) => {navigate("/subscription")}
+            )
         }
     )
 }
