@@ -4,6 +4,7 @@ import { InternetContent, getInternetContentFilterKey } from './model';
 import { local_data } from './local_data';
 import { Content } from './Content';
 import { TableFilter } from "./TableFilter"
+import { valueContainerCSS } from 'react-select/dist/declarations/src/components/containers';
 
 
 interface TableProps {
@@ -36,20 +37,37 @@ constructor(props: TableProps) {
     }
   }
 
-  render() {
+  getVisibleContent(state: TableState): InternetContent[] {
+    /**
+     * Returns the content that should be visible to the user. 
+     * 
+     * Content will be visible iff
+     *   1. When filter keys are present/selected, the content has a filter key within the selected set.
+     *   2. The URL of the internet content is not already in the visible content (i.e. duplicate 
+     *        external URLs are removed; this can occur when multiple sources have the same content)
+     */
     const {content, filters} = this.state
     const visibleContent = filters.length > 0 ? content.filter((x) => filters.includes(getInternetContentFilterKey(x)) ) : content
-    console.log(visibleContent.length, filters)
+
+    const urlToVisibleContent = new Map(visibleContent.map(item =>[item.url, item]))    
+     return Array.from(urlToVisibleContent.values())
+    
+  }
+
+  getFilterKeys(state: TableState): string[] {
+    /**
+     * Returns the possible content filter keys from the current Internet Content.
+     */
+    return Array.from(new Set(this.state.content.map((c) => getInternetContentFilterKey(c))))
+  }
+
+  render() {
+    const visibleContent = this.getVisibleContent(this.state)
     return (
         <div>
-            <TableFilter
-                onChange={(values: string[]) => {this.setState({filters: values})}}
-                sources={Array.from(new Set(content.map((c) => getInternetContentFilterKey(c))))}
-            />
+            <TableFilter onChange={(values: string[]) => {this.setState({filters: values})}} sources={this.getFilterKeys(this.state)}/>
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
-                {visibleContent.map((c) => (
-                <Content news={c} />
-                ))}
+                {visibleContent.map((c) => (<Content news={c} /> ))}
             </div>
         </div>
     );

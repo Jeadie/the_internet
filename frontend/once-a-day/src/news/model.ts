@@ -12,6 +12,14 @@ export interface InternetContent {
 } 
 
 export function getInternetContentFilterKey(content: InternetContent): string {
-	const subkey = content.mainCategory != "" ? ` - ${content.mainCategory}` : ""
-	return `${content.location}${subkey}`
+	if (!content.mainCategory) {
+		return content.location
+	}
+
+	let subkey = content.mainCategory.split("-").map(capitaliseWord).join(" ")
+	return `${content.location} - ${subkey}`
+}
+
+export function capitaliseWord(word: string): string {
+	return word[0].toUpperCase() + word.substring(1)
 }
