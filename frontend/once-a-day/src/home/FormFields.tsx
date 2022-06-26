@@ -1,6 +1,27 @@
 import { FormEvent, FormEventHandler } from "react"
 import { ReactNode, useState } from "react"
 
+export function InputField(inputId: string, placeholder: string, onChange: FormEventHandler, inputIcon?: ReactNode) {
+return (
+  <div className="py-2">
+        <label htmlFor={inputId} className="text-sm font-medium">{inputId[0].toUpperCase() + inputId.substring(1)}</label>
+        <div className="relative mt-1">
+          <input
+            autoFocus
+            type={inputId}
+            id={inputId}
+            className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
+            placeholder={placeholder}
+            onChange={onChange}
+          />
+          <span className="absolute inset-y-0 inline-flex items-center right-4">
+            {inputIcon}
+          </span>
+        </div>
+      </div>
+  )
+}
+
 export function EmailInput(onChange: FormEventHandler) {
     return (
         <div>
@@ -51,8 +72,6 @@ export function PasswordInput(onChange: FormEventHandler) {
           placeholder="Enter password"
           onChange={onChange}
         />
-
-      {/* TODO: Add click handler to toggle between type=password/text above */}
         <span className="absolute inset-y-0 inline-flex items-center right-4" onClick={() => {setIsPasswordType(!isPasswordType)}}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -80,6 +99,18 @@ export function PasswordInput(onChange: FormEventHandler) {
     )
 }
 
+export function ErrorText(value: string | ReactNode) {
+  return (<p className="text-md text-center text-red-500">{value}</p>)
+}
+
+export function FormButton(buttonText: string) {
+  return (
+  <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
+    {buttonText}
+  </button>
+  )
+}
+
 export function AuthenticationForm(title: string, description: string, formTitle: string, submitButtonText: string, redirectNode: ReactNode, errorMessage: string | undefined, onSubmit: (inputs: Record<string, string>) => void) {
   let [state, setState] = useState({})
 
@@ -95,27 +126,30 @@ export function AuthenticationForm(title: string, description: string, formTitle
   const passwordInput = PasswordInput(inputOnChange)
   
 
-  
-    return (
-        <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
-            <div className="max-w-lg mx-auto">
-                <h1 className="text-3xl font-bold text-center text-test-600 sm:text-3xl">{title}</h1>
+    return FormBox(title, description, (
+        <form onSubmit={(e => {e.preventDefault(); onSubmit(state)})}>
+          <p className="text-lg font-medium">{formTitle}</p>
+          {emailInput}
+          {passwordInput}
+          {FormButton(submitButtonText)}
+          {errorMessage && ErrorText(errorMessage)}
+          {redirectNode}
+        </form>
+    ))
+}
 
-                <p className="max-w-md mx-auto mt-4 text-center text-grey-500">{description}</p>
-
-                <form onSubmit={(e => {e.preventDefault(); onSubmit(state)})} className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
-                    <p className="text-lg font-medium">{formTitle}</p>
-                    {emailInput}
-                    {passwordInput}
-                    <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
-                        {submitButtonText}
-                    </button>
-                    {errorMessage && <p className="text-md text-center text-red-500">{errorMessage}</p>}
-                    {redirectNode}
-                </form>
-            </div>
+export function FormBox(title: string, description: string, child: ReactNode) {
+  return (
+    <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
+      <div className="max-w-lg mx-auto">
+        <h1 className="text-3xl font-bold text-center text-test-600 sm:text-3xl">{title}</h1>
+        <p className="max-w-md mx-auto mt-4 text-center text-grey-500">{description}</p>
+        <div className="p-8 mt-6 mb-0 space-y-4 rounded-lg shadow-2xl">
+          {child}
         </div>
-    )
+      </div>
+    </div>
+  )
 }
 
 export function PlanPricingCard(planName: string, planSubtitle: string, monthlyPrice: number, billingFrequency: "Annually" | "Quarterly" | "Monthly", buttonText: string, features: string[], onclick: () => void) {

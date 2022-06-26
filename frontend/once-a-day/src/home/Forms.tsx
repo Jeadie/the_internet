@@ -2,12 +2,13 @@ import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
 import { ReactNode, useState } from "react"
 import { useNavigate } from "react-router-dom";
 
-import { AuthenticationForm, PlanPricingCard } from "./FormFields"
+import { AuthenticationForm, ErrorText, FormBox, FormButton, InputField, PlanPricingCard } from "./FormFields"
 import UserAPI from "./UserAPI";
+import { URL } from "../constants"
 
 export function CreateAccount() {
     let navigate = useNavigate();
-    let [err_msg, set_err_msg] = useState("")
+    let [err_node, set_err_node] = useState("")
 
     return AuthenticationForm(
         "Get Started Today!",
@@ -17,13 +18,16 @@ export function CreateAccount() {
         <p className="text-sm text-center text-gray-500">{"Have an account? "}
             <a className="underline" href="/login">Log in</a>
         </p>,
-        err_msg,
+        err_node,
         (input) => {
             UserAPI.createAccount(
                 input["email"],
                 input["password"],
-                (_: CognitoUser) => {navigate("/subscription")},
-                (err: Error) => {set_err_msg(err.message)}
+                (u: CognitoUser) => {
+                    console.log(u)
+                    navigate(URL.CONFIRM_ACCOUNT)
+                },
+                (err: Error) => {set_err_node(err.message)}
             )
         }
     )
@@ -31,7 +35,7 @@ export function CreateAccount() {
 
 export function Login() {
     let navigate = useNavigate();
-    let [err_msg, set_err_msg] = useState("")
+    let [err_node, set_err_node] = useState("")
 
     return AuthenticationForm(
         "news.onceaday.fyi",
@@ -41,11 +45,52 @@ export function Login() {
         <p className="text-sm text-center text-gray-500">{"No account? "}
             <a className="underline" href="/create-account">Sign up</a>
         </p>,
-        err_msg,
+        err_node,
         (input) => {
-            UserAPI.login(input["email"], input["password"], (_: CognitoUserSession) => {navigate("/")}, (err: Error) => {set_err_msg(err.message)})
+            UserAPI.login(input["email"], input["password"], (_: CognitoUserSession) => {navigate(URL.ROOT)}, (err: Error) => {set_err_node(err.message)})
         }
     )
+}
+
+export function ConfirmAccount() {
+    interface ConfirmState {
+        "Verification Code": string
+        "err_node": string | ReactNode
+    }
+    let [state, setState] = useState<ConfirmState>({"Verification Code": "", "err_node": ""})
+
+    const inputOnChange = (e: React.FormEvent<HTMLInputElement>) => {
+      setState({
+        // Order is important. Override current state with new update.
+        ...state,
+        [e.currentTarget.id]: e.currentTarget.value,
+      });
+    };
+
+    let navigate = useNavigate();
+    const submit = () => {
+        UserAPI.confirmRegistration(
+            state["Verification Code"],
+            () => {navigate(URL.SUBSCRIPTIONS)},
+            (e: Error) => {
+                if (e.message == "NoUser") {
+                    setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href="/login">here</a></p>})
+                } else {
+                    setState({...state, err_node: ErrorText(e.message)})
+                }
+            }
+        )
+    }
+
+    return FormBox(
+        "Check your inbox",
+        "We've sent you a verification code to your email", (
+        <form onSubmit={(e => {e.preventDefault(); submit()})}>
+            {InputField("Verification Code", "aBc123...", inputOnChange)}
+            {FormButton("Verify")}
+            {state.err_node && state.err_node}
+        </form>
+    ))
 }
 
 export function SelectSubscription() {
@@ -66,7 +111,7 @@ export function SelectSubscription() {
                         "Quarterly", 
                         "Select",
                         ["First point", "Second point"], 
-                        () => {navigate("/create-account")}
+                        () => {navigate(URL.CREATE_ACCOUNT)}
                     )}</div>
                     <div className="col-span-1 lg:px-5 my-5">
                     {PlanPricingCard(
@@ -76,7 +121,7 @@ export function SelectSubscription() {
                         "Quarterly", 
                         "Select",
                         ["All the news", "All the newspapers"],
-                        () => {navigate("/login")}
+                        () => {navigate(URL.LOGIN)}
                     )}</div>
                 </div>
                 <div className="lg:basis-1/4 xl:basis-1/4"></div>

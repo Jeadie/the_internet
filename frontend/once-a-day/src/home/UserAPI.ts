@@ -6,6 +6,7 @@ import {
 	CognitoUserSession,
 	ICognitoUserData
 } from 'amazon-cognito-identity-js';
+import { isNull } from 'util';
 
 var poolData = {
 	UserPoolId: 'us-east-1_UT3yIKEIo', // TODO
@@ -14,9 +15,11 @@ var poolData = {
 
 class UserAPI {
 	private userPool: CognitoUserPool;
+	private currentUser: CognitoUser | null;
 
     constructor(userPoolId: string, clientId: string) {
         this.userPool = new CognitoUserPool({UserPoolId: userPoolId, ClientId: clientId});
+		this.currentUser = null
     }
 
 	createAccount(email: string, password: string, onSuccess?: (user: CognitoUser) => void, onFailure?: (err: Error) => void) {
@@ -37,6 +40,7 @@ class UserAPI {
 				onFailure(err!)
 			}
 			if (!err && onSuccess) {
+				this.currentUser = result?.user!
 				onSuccess(result?.user!)
 			}
 		});
@@ -48,20 +52,30 @@ class UserAPI {
 				Username: this.createUsername(email),
 				Password: password,
 			}), {
-			onSuccess: onSuccess ? onSuccess : () => {},
+			onSuccess: (s: CognitoUserSession) => {
+				this.currentUser = this.userPool.getCurrentUser();
+				if(onSuccess) {onSuccess(s)};
+			},
 			onFailure: onFailure ? onFailure: () => {}
 		});
 	}
 
-	confirmRegistration(email: string, confirmationCode: string, onSuccess?: (session: CognitoUserSession) => void, onFailure?: (err: Error) => void) {
-		let user = new CognitoUser(this.getUserData(email))
-		user.confirmRegistration(confirmationCode, true, (err: Error, result: any) => {
+	confirmRegistration(confirmationCode: string, onSuccess?: () => void, onFailure?: (err: Error) => void) {
+		let user = this.currentUser
+		console.log(user)
+		console.log(this.userPool)
+		if (!user) {
+			if (onFailure){
+				onFailure(Error("NoUser"))
+			}
+			return 
+		}
+		user!!.confirmRegistration(confirmationCode, true, (err: Error, result: any) => {
 			if (err && onFailure) {
 				onFailure(err)
 			}
-			if (onSuccess && result) {
-				console.log(result)
-				console.log(typeof result)
+			if (onSuccess && result == "SUCCESS") {
+				onSuccess()
 			}
 		})
 	}
@@ -69,13 +83,14 @@ class UserAPI {
 	resendRegistrationCode(email: string, onSuccess?: (session: CognitoUserSession) => void, onFailure?: (err: Error) => void) {
 		let user = new CognitoUser(this.getUserData(email))
 		user.resendConfirmationCode((err: Error | undefined, result: any) => {
-			err && onFailure ? onFailure(err) : {};
-			result && onSuccess ? onSuccess(result): {}; 
+			if (err && onFailure) {onFailure(err)};
+			if (result && onSuccess) {onSuccess(result)};
 		})
 	}
 
 	logout() {
 		this.userPool.getCurrentUser()?.signOut()
+		this.currentUser = null
 	}
 
 	createUsername(email: string): string {
