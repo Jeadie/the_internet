@@ -46,7 +46,7 @@ export function Login() {
         </p>,
         err_node,
         (input) => {
-            UserAPI.login(input["email"], input["password"], (_: CognitoUserSession) => {navigate(URL.ROOT)}, (err: Error) => {set_err_node(err.message)})
+            UserAPI.login(input["email"], input["password"], (_: CognitoUserSession) => {navigate(URL.NEWS_BASE)}, (err: Error) => {set_err_node(err.message)})
         }
     )
 }
@@ -99,7 +99,7 @@ export function ConfirmAccount() {
         "Check your inbox",
         "We've sent you a verification code to your email", (
         <form onSubmit={(e => {e.preventDefault(); submit()})}>
-            {InputField("Verification Code", "Abc123...", inputOnChange)}
+            {InputField("Verification Code", "Abc123...", inputOnChange, true)}
             {FormButton("Verify")}
             {state.err_node && state.err_node}
             <p className="py-3 text-sm text-center text-gray-500">{"Didn't receive it? "}

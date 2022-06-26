@@ -1,13 +1,13 @@
-import { FormEvent, FormEventHandler } from "react"
+import { FormEventHandler } from "react"
 import { ReactNode, useState } from "react"
 
-export function InputField(inputId: string, placeholder: string, onChange: FormEventHandler, inputIcon?: ReactNode) {
+export function InputField(inputId: string, placeholder: string, onChange: FormEventHandler, focus: boolean, iconPath?: ReactNode) {
 return (
   <div className="py-2">
         <label htmlFor={inputId} className="text-sm font-medium">{inputId[0].toUpperCase() + inputId.substring(1)}</label>
         <div className="relative mt-1">
           <input
-            autoFocus
+            autoFocus={focus}
             type={inputId}
             id={inputId}
             className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
@@ -15,7 +15,9 @@ return (
             onChange={onChange}
           />
           <span className="absolute inset-y-0 inline-flex items-center right-4">
-            {inputIcon}
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-test-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {iconPath}
+            </svg>
           </span>
         </div>
       </div>
@@ -23,79 +25,26 @@ return (
 }
 
 export function EmailInput(onChange: FormEventHandler) {
-    return (
-        <div>
-        <label htmlFor="email" className="text-sm font-medium">Email</label>
-
-        <div className="relative mt-1">
-          <input
-            autoFocus
-            type="email"
-            id="email"
-            className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
-            placeholder="Enter email"
-            onChange={onChange}
-          />
-
-          <span className="absolute inset-y-0 inline-flex items-center right-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 text-test-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-              />
-            </svg>
-          </span>
-        </div>
-      </div>
-    )
+  return InputField(
+    "email",
+    "Enter email",
+    onChange,
+    true,
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+      d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+    />
+  )
 }
 
 export function PasswordInput(onChange: FormEventHandler) {
-    let [isPasswordType, setIsPasswordType] = useState(true)
-
-    return (
-      <div>
-      <label htmlFor="password" className="text-sm font-medium">Password</label>
-      <div className="relative mt-1">
-        <input
-          type={isPasswordType ? "password": "text"}
-          id="password"
-          className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
-          placeholder="Enter password"
-          onChange={onChange}
-        />
-        <span className="absolute inset-y-0 inline-flex items-center right-4" onClick={() => {setIsPasswordType(!isPasswordType)}}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5 text-test-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-            />
-          </svg>
-        </span>
-      </div>
-    </div>
+    return InputField(
+      "password",
+      "Enter password",
+      onChange,
+      false,
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+        />,
     )
 }
 
