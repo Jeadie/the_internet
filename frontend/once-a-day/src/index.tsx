@@ -16,12 +16,13 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-const isLocal = true
+const isLocal = false
+
 root.render(
   <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path={URL.ROOT} element={<HomeApp/>}/>
+          <Route path={URL.ROOT} element={isLocal ? <HomeApp/> : <NewsApp isLocal={isLocal} />}/>
           <Route path={URL.NEWS_BASE} element={<NewsApp isLocal={isLocal} />}/>
           <Route path={URL.LOGIN} element={<Login />}/>
           <Route path={URL.CREATE_ACCOUNT} element={<CreateAccount/>}/> 

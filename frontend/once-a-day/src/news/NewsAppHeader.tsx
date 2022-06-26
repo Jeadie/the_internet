@@ -7,6 +7,6 @@ export function NewsAppHeader() {
         <p className="mt-4 sm:leading-relaxed sm:text-xl">
             The entire internet in one place.
           </p>
-    </div>
+      </div>
     )
   }

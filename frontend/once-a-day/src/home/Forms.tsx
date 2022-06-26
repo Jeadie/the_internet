@@ -17,7 +17,7 @@ export function CreateAccount() {
         "We promise to get you right back to the news",
         "Create an Account",
         "Sign up",
-        <p className="text-sm text-center text-gray-500">{"Have an account? "}
+        <p className="py-3 text-sm text-center text-gray-500">{"Have an account? "}
             <a className="underline" href="/login">Log in</a>
         </p>,
         err_node,
@@ -25,10 +25,7 @@ export function CreateAccount() {
             UserAPI.createAccount(
                 input["email"],
                 input["password"],
-                (u: CognitoUser) => {
-                    console.log(u)
-                    navigate(URL.CONFIRM_ACCOUNT)
-                },
+                (u: CognitoUser) => {navigate(URL.CONFIRM_ACCOUNT)},
                 (err: Error) => {set_err_node(err.message)}
             )
         }
@@ -44,7 +41,7 @@ export function Login() {
         "",
         "Sign in to your account",
         "Sign in",
-        <p className="text-sm text-center text-gray-500">{"No account? "}
+        <p className="py-3 text-sm text-center text-gray-500">{"No account? "}
             <a className="underline" href="/create-account">Sign up</a>
         </p>,
         err_node,

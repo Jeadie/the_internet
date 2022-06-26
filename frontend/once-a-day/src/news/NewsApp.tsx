@@ -39,7 +39,7 @@ export default class NewsApp extends React.Component<IProps, NewsAppState> {
     return (
       <div className="App">
         <NewsAppHeader/>
-          <div className="py-2 bg-gray-100  flex flex-row">
+          <div className="py-2 flex flex-row">
           <div className="xl:basis-1/6 lg:basis-1/6"></div>
             <Table isLocal={this.props.isLocal}/>
             <div className="xl:basis-1/6 lg:basis-1/6"></div>
