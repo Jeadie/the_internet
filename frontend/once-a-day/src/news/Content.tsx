@@ -1,14 +1,21 @@
 import './App.css';
 import { getInternetContentFilterKey, InternetContent } from './model';
 
+export const openInNewTab = (url: string): void => {
+    // Avoid security problems with: `noopener,noreferrer`
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
 
+  
 interface ContentProps {
     news: InternetContent
   }
 
+
 export function Content({ news }: ContentProps) {
     return (
-        <article className="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
+        <article onClick={() => {openInNewTab(news.url)}}  className="col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
             <div className="flex items-start">
         
             <div className="sm:ml-8">
