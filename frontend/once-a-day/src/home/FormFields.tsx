@@ -1,27 +1,39 @@
 import { FormEventHandler } from "react"
 import { ReactNode, useState } from "react"
 
-export function InputField(inputId: string, placeholder: string, onChange: FormEventHandler, focus: boolean, iconPath?: ReactNode) {
-return (
-  <div className="py-2">
-        <label htmlFor={inputId} className="text-sm font-medium">{inputId[0].toUpperCase() + inputId.substring(1)}</label>
-        <div className="relative mt-1">
-          <input
-            autoFocus={focus}
-            type={inputId}
-            id={inputId}
-            className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
-            placeholder={placeholder}
-            onChange={onChange}
-          />
-          <span className="absolute inset-y-0 inline-flex items-center right-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-test-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {iconPath}
-            </svg>
-          </span>
-        </div>
+export function PopupContent(title: string, description: string) {
+  return (
+    <div className="p-8 bg-white border border-test-100 shadow-lg rounded-2xl" role="alert">
+      <div className="items-center sm:flex">
+        <p className="mt-3 text-lg font-medium">{title}</p>
       </div>
+
+      <p className="mt-4 text-gray-500">{description}</p>
+    </div>
   )
+}
+
+export function InputField(inputId: string, placeholder: string, onChange: FormEventHandler, focus: boolean, iconPath?: ReactNode) {
+  return (
+    <div className="py-2">
+          <label htmlFor={inputId} className="text-sm font-medium">{inputId[0].toUpperCase() + inputId.substring(1)}</label>
+          <div className="relative mt-1">
+            <input
+              autoFocus={focus}
+              type={inputId}
+              id={inputId}
+              className="w-full p-4 pr-12 text-sm border-test-200 rounded-lg shadow-sm"
+              placeholder={placeholder}
+              onChange={onChange}
+            />
+            <span className="absolute inset-y-0 inline-flex items-center right-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-test-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                {iconPath}
+              </svg>
+            </span>
+          </div>
+        </div>
+    )
 }
 
 export function EmailInput(onChange: FormEventHandler) {
@@ -101,7 +113,20 @@ export function FormBox(title: string, description: string, child: ReactNode) {
   )
 }
 
-export function PlanPricingCard(planName: string, planSubtitle: string, monthlyPrice: number, billingFrequency: "Annually" | "Quarterly" | "Monthly", buttonText: string, features: string[], onclick: () => void) {
+export function Button(onclick: () => void, button_text: string) {
+  return <a onClick={onclick}
+      className="inline-block px-8 py-3 mt-8 text-sm font-medium text-white transition bg-test-600 rounded hover:bg-test-700 hover:shadow-xl active:bg-test-500 focus:outline-none focus:ring"
+      >{button_text}
+    </a>
+}
+
+export function PlanPricingCard(planName: string, planSubtitle: string, monthlyPrice: number, billingFrequency: "Annually" | "Quarterly" | "Monthly", button: string | ReactNode, features: string[], onclick: () => void) {
+    var buttonNode: ReactNode
+    if (typeof button == "string") {
+        buttonNode = Button(onclick, button)
+    } else {
+      buttonNode = button
+    }
     return (
         <article className="block p-6 text-center shadow-xl bg-gray-50 rounded-xl">
         <h5 className="text-3xl font-bold text-test-600">{planName}</h5>
@@ -120,17 +145,15 @@ export function PlanPricingCard(planName: string, planSubtitle: string, monthlyP
 
         <ul className="mt-8 space-y-2.5 text-gray-900">
             {features.map((f) => {
-                return PricingPlaninclusion(f)
+                return PricingPlanInclusion(f)
             })}
         </ul>
-        <a onClick={onclick}
-            className="inline-block px-8 py-3 mt-8 text-sm font-medium text-white transition bg-test-600 rounded hover:bg-test-700 hover:shadow-xl active:bg-test-500 focus:outline-none focus:ring"
-        >{buttonText}</a>
+        {buttonNode}
         </article>
     )
 }
 
-function PricingPlaninclusion(inclusionDescription: string) {
+export function PricingPlanInclusion(inclusionDescription: string) {
     return (
         <li>
             <svg

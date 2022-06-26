@@ -1,8 +1,9 @@
 import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
 import { ReactNode, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import Popup from 'reactjs-popup';
 
-import { AuthenticationForm, ErrorText, FormBox, FormButton, InputField, PlanPricingCard } from "./FormFields"
+import { AuthenticationForm, Button, ErrorText, FormBox, FormButton, InputField, PlanPricingCard, PopupContent } from "./FormFields"
 import UserAPI from "./UserAPI";
 import { URL } from "../constants"
 
@@ -110,9 +111,10 @@ export function ConfirmAccount() {
 }
 
 export function SelectSubscription() {
-    // TODO: change to route to news page (and login, etc). 
     let navigate = useNavigate();
+    
     const title = "Select an option"
+
     return  (
         <div>
             <h3 className="block p-6 text-center lg:my-8 text-4xl font-bold text-test-600 justify-center">{title}</h3>
@@ -122,23 +124,29 @@ export function SelectSubscription() {
                     <div className="col-span-1 lg:px-5 my-5">
                     {PlanPricingCard(
                         "Free",
-                        "No strings attached",
+                        "We won't charge our Beta users now, or ever.", // No strings attached",
                         0, 
                         "Quarterly", 
                         "Select",
-                        ["First point", "Second point"], 
-                        () => {navigate(URL.CREATE_ACCOUNT)}
+                        ["News from across the Internet", "Basic search & filtering"], 
+                        () => {navigate(URL.NEWS_BASE)}
                     )}</div>
                     <div className="col-span-1 lg:px-5 my-5">
                     {PlanPricingCard(
                         "Full",
-                        "All the news. All the newspapers. Forever.",
+                        "When we finish all the features, stabilise and get out of Beta",
                         3, 
                         "Quarterly", 
-                        "Select",
-                        ["All the news", "All the newspapers"],
-                        () => {navigate(URL.LOGIN)}
-                    )}</div>
+                        <Popup trigger={Button(() => {}, "Not yet")} position="right center">
+                            {PopupContent(
+                                "You're too early",
+                                "We're glad you're excited about the product, but currently we're in beta. Signup for a free account, and as a Beta user, you'll be free for life!"
+                            )}
+                        </Popup>,
+                        ["Advanced search & filtering", "Saved views", "Bookmarks & saved articles", "Newspaper Requests"], 
+                        () => {}
+                    )}
+                    </div>
                 </div>
                 <div className="lg:basis-1/4 xl:basis-1/4"></div>
             </div>
