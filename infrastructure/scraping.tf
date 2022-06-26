@@ -21,6 +21,12 @@ resource "aws_lambda_function" "content_scraper" {
     handler       = "main.handler"
     layers =  [aws_lambda_layer_version.content_scraper_dependencies.arn]
     timeout = 150
+
+    environment {
+      variables = {
+        NEWS_API_KEY = var.news_api_key
+      }
+    }
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_invoke" {
