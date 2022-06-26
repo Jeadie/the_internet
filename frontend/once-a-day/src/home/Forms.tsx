@@ -18,7 +18,7 @@ export function CreateAccount() {
         "Create an Account",
         "Sign up",
         <p className="py-3 text-sm text-center text-gray-500">{"Have an account? "}
-            <a className="underline" href="/login">Log in</a>
+            <a className="underline" href={URL.LOGIN}>Log in</a>
         </p>,
         err_node,
         (input) => {
@@ -42,7 +42,7 @@ export function Login() {
         "Sign in to your account",
         "Sign in",
         <p className="py-3 text-sm text-center text-gray-500">{"No account? "}
-            <a className="underline" href="/create-account">Sign up</a>
+            <a className="underline" href={URL.CREATE_ACCOUNT}>Sign up</a>
         </p>,
         err_node,
         (input) => {
@@ -89,7 +89,7 @@ export function ConfirmAccount() {
 
     const handleError = (e: Error) => {
         if (e.message == "NoUser") {
-            setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href="/login">here</a></p>})
+            setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href={URL.LOGIN}>here</a></p>})
         } else {
             setState({...state, err_node: ErrorText(e.message)})
         }

@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { URL } from '../constants';
 
 interface IProps {
 }
@@ -19,7 +19,8 @@ export default class HomeApp extends React.Component<IProps, HomeAppState> {
 
     const firstTitleLine = "All the News."
     const secondTitleLine = "Once a Day."
-    const description = "News from all over the internet. In one place. Gathered once a day"
+    const description = "All the news. In one place. Gathered once a day"
+
     return (
         <section className="bg-gray-50">
             <div className="max-w-screen-xl px-4 py-32 mx-auto lg:h-screen lg:items-center lg:flex">
@@ -36,11 +37,11 @@ export default class HomeApp extends React.Component<IProps, HomeAppState> {
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-4 mt-8">
-                    <a className="block w-full px-12 py-3 text-sm font-medium text-white bg-test-600 rounded shadow sm:w-auto active:bg-test-500 hover:bg-test-700 focus:outline-none focus:ring" href="/create-account">
+                    <a className="hover:shadow-2xl block w-full px-12 py-3 text-sm font-medium text-white bg-test-600 rounded shadow sm:w-auto active:bg-test-500 hover:bg-test-700 focus:outline-none focus:ring" href={URL.CREATE_ACCOUNT}>
                     {createAccount}
                     </a>
 
-                    <a className="block w-full px-12 py-3 text-sm font-medium text-test-600 rounded shadow sm:w-auto hover:text-test-700 active:text-test-500 focus:outline-none focus:ring" href="/login">
+                    <a className="hover:shadow-2xl block w-full px-12 py-3 text-sm font-medium text-test-600 rounded shadow sm:w-auto hover:text-test-700 active:text-test-500 focus:outline-none focus:ring" href={URL.LOGIN}>
                     {loginString}
                     </a>
                 </div>
