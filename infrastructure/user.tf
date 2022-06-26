@@ -24,6 +24,9 @@ resource "aws_cognito_user_pool" "onceaday_users" {
       mutable                  = false
       name                     = "subscription_type"
       required                 = false
+      string_attribute_constraints {
+        
+      }
   }
 
   account_recovery_setting {
