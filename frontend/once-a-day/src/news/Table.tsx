@@ -57,7 +57,7 @@ constructor(props: TableProps) {
     const visibleContent = filters.length > 0 ? content.filter((x) => filters.includes(getInternetContentFilterKey(x)) ) : content
 
     const urlToVisibleContent = new Map(visibleContent.map(item =>[item.url, item]))    
-     return Array.from(urlToVisibleContent.values())
+     return Array.from(urlToVisibleContent.values()).sort(() => (Math.random() > .5) ? 1 : -1)
     
   }
 
@@ -73,7 +73,7 @@ constructor(props: TableProps) {
     const visibleContent = this.getVisibleContent(this.state)
     return (
         <div>
-          <TableFilter isDisabled={!this.state.showTableFilter} onChange={(values: string[]) => {this.setState({filters: values})}} sources={this.getFilterKeys(this.state)}/>
+            <TableFilter isDisabled={!this.state.showTableFilter} onChange={(values: string[]) => {this.setState({filters: values})}} sources={this.getFilterKeys(this.state)}/>
             <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 lg:mx-4 md:mx-2">
                 {visibleContent.map((c) => (<Content news={c} /> ))}
             </div>
