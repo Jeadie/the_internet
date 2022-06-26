@@ -62,8 +62,6 @@ class UserAPI {
 
 	confirmRegistration(confirmationCode: string, onSuccess?: () => void, onFailure?: (err: Error) => void) {
 		let user = this.currentUser
-		console.log(user)
-		console.log(this.userPool)
 		if (!user) {
 			if (onFailure){
 				onFailure(Error("NoUser"))
@@ -80,8 +78,14 @@ class UserAPI {
 		})
 	}
 
-	resendRegistrationCode(email: string, onSuccess?: (session: CognitoUserSession) => void, onFailure?: (err: Error) => void) {
-		let user = new CognitoUser(this.getUserData(email))
+	resendRegistrationCode(onSuccess?: (session: CognitoUserSession) => void, onFailure?: (err: Error) => void) {
+		let user = this.currentUser
+		if (!user) {
+			if (onFailure){
+				onFailure(Error("NoUser"))
+			}
+			return 
+		}
 		user.resendConfirmationCode((err: Error | undefined, result: any) => {
 			if (err && onFailure) {onFailure(err)};
 			if (result && onSuccess) {onSuccess(result)};

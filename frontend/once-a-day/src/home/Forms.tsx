@@ -6,6 +6,8 @@ import { AuthenticationForm, ErrorText, FormBox, FormButton, InputField, PlanPri
 import UserAPI from "./UserAPI";
 import { URL } from "../constants"
 
+let delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
 export function CreateAccount() {
     let navigate = useNavigate();
     let [err_node, set_err_node] = useState("")
@@ -53,11 +55,15 @@ export function Login() {
 }
 
 export function ConfirmAccount() {
+    let navigate = useNavigate();
+
     interface ConfirmState {
         "Verification Code": string
         "err_node": string | ReactNode
+        disable_resend: boolean
     }
-    let [state, setState] = useState<ConfirmState>({"Verification Code": "", "err_node": ""})
+    let [state, setState] = useState<ConfirmState>({"Verification Code": "", "err_node": "", disable_resend: false})
+
 
     const inputOnChange = (e: React.FormEvent<HTMLInputElement>) => {
       setState({
@@ -67,28 +73,41 @@ export function ConfirmAccount() {
       });
     };
 
-    let navigate = useNavigate();
     const submit = () => {
         UserAPI.confirmRegistration(
             state["Verification Code"],
             () => {navigate(URL.SUBSCRIPTIONS)},
-            (e: Error) => {
-                if (e.message == "NoUser") {
-                    setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href="/login">here</a></p>})
-                } else {
-                    setState({...state, err_node: ErrorText(e.message)})
-                }
-            }
+            handleError
         )
+    }
+
+    const resend = () => {
+        // Reduce spamming of emails
+        if (state.disable_resend) {return}
+
+        setState({...state, disable_resend: true})
+        UserAPI.resendRegistrationCode(() => {}, handleError)
+        delay(2000).then(() => {setState({...state, disable_resend: false})})
+    }
+
+    const handleError = (e: Error) => {
+        if (e.message == "NoUser") {
+            setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href="/login">here</a></p>})
+        } else {
+            setState({...state, err_node: ErrorText(e.message)})
+        }
     }
 
     return FormBox(
         "Check your inbox",
         "We've sent you a verification code to your email", (
         <form onSubmit={(e => {e.preventDefault(); submit()})}>
-            {InputField("Verification Code", "aBc123...", inputOnChange)}
+            {InputField("Verification Code", "Abc123...", inputOnChange)}
             {FormButton("Verify")}
             {state.err_node && state.err_node}
+            <p className="py-3 text-sm text-center text-gray-500">{"Didn't receive it? "}
+                <a className={!state.disable_resend ? "underline": ""} onClick={resend}>Resend code</a>
+            </p>
         </form>
     ))
 }
