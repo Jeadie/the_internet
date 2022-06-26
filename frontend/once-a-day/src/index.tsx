@@ -6,9 +6,10 @@ import {
   Route,
 } from "react-router-dom";
 import './index.css';
-import HomeApp from './home/HomeApp';
+import { URL } from './constants'
 import NewsApp from './news/NewsApp';
-import { CreateAccount, Login, SelectSubscription } from "./home/Forms";
+import HomeApp from './home/HomeApp';
+import { ConfirmAccount, CreateAccount, Login, SelectSubscription } from "./home/Forms";
 
 import reportWebVitals from './reportWebVitals';
 
@@ -20,12 +21,12 @@ root.render(
   <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          {/* <Route path= "/" element={<HomeApp/>}/> */}
-          <Route path= "/" element={<NewsApp isLocal={isLocal} />}/>
-          <Route path= "/news" element={<NewsApp isLocal={isLocal} />}/>
-          <Route path= "/login" element={<Login />}/>
-          <Route path= "/create-account" element={<CreateAccount/>}/> 
-          <Route path= "/subscription" element={<SelectSubscription/>}/> 
+          <Route path={URL.ROOT} element={<HomeApp/>}/>
+          <Route path={URL.NEWS_BASE} element={<NewsApp isLocal={isLocal} />}/>
+          <Route path={URL.LOGIN} element={<Login />}/>
+          <Route path={URL.CREATE_ACCOUNT} element={<CreateAccount/>}/> 
+          <Route path={URL.SUBSCRIPTIONS} element={<SelectSubscription/>}/> 
+          <Route path={URL.CONFIRM_ACCOUNT} element={<ConfirmAccount/>}/>
         </Routes>
     </BrowserRouter>
   </React.StrictMode>
