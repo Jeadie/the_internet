@@ -79,8 +79,11 @@ func GetInternetContentFromToday(ctx context.Context) []InternetContent {
 	dao := GetDao(ctx)
 	var content []InternetContent
 
+	yesterday := time.Now().Add(-1 * 24 * time.Hour)
+
 	expr, err := expression.NewBuilder().WithFilter(
-		expression.Name("timestamp").GreaterThanEqual(expression.Value(time.Now().Add(-1 * 24 * time.Hour).Unix()))).Build()
+		expression.Name("timestamp").GreaterThanEqual(expression.Value(
+			time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 0, 0, 0, 0, time.UTC).Unix()))).Build()
 
 	if err != nil {
 		fmt.Println(err.Error())
