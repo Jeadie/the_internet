@@ -1,3 +1,4 @@
+import Ana from '../ana';
 import './App.css';
 import { getInternetContentFilterKey, InternetContent } from './model';
 
@@ -14,8 +15,17 @@ interface ContentProps {
 
 
 export function Content({ news }: ContentProps) {
+    const clicked = () => {
+        openInNewTab(news.url);
+        Ana.track_news_click({
+            url: news.url,
+            title: news.title,
+            source: news.location,
+            subtype: news.mainCategory
+        })
+    }
     return (
-        <article onClick={() => {openInNewTab(news.url)}}  className="shadow-lg hover:shadow-2xl col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
+        <article onClick={() => clicked()}  className="news-content shadow-lg hover:shadow-2xl col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
             <div className="flex">
         
             <div className="sm:ml-8">

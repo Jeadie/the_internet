@@ -7,6 +7,7 @@ import {
 	ICognitoUserData
 } from 'amazon-cognito-identity-js';
 import { isNull } from 'util';
+import Ana from '../ana';
 
 var poolData = {
 	UserPoolId: 'us-east-1_UT3yIKEIo', // TODO
@@ -41,6 +42,7 @@ class UserAPI {
 			}
 			if (!err && onSuccess) {
 				this.currentUser = result?.user!
+				Ana.identify_user(this.createUsername(email));
 				onSuccess(result?.user!)
 			}
 		});
@@ -55,6 +57,7 @@ class UserAPI {
 			onSuccess: (s: CognitoUserSession) => {
 				this.currentUser = this.userPool.getCurrentUser();
 				if(onSuccess) {onSuccess(s)};
+				Ana.identify_user(this.createUsername(email));
 			},
 			onFailure: onFailure ? onFailure: () => {}
 		});

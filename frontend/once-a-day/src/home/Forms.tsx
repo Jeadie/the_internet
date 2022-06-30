@@ -1,15 +1,17 @@
 import { CognitoUser, CognitoUserSession } from "amazon-cognito-identity-js";
-import { ReactNode, useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { ReactNode, useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom";
 import Popup from 'reactjs-popup';
 
 import { AuthenticationForm, Button, ErrorText, FormBox, FormButton, InputField, PlanPricingCard, PopupContent } from "./FormFields"
 import UserAPI from "./UserAPI";
 import { URL } from "../constants"
+import Analytics from "../ana";
 
 let delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export function CreateAccount() {
+    useEffect(() => {Analytics.visited("CreateAccount")}, [])
     let navigate = useNavigate();
     let [err_node, set_err_node] = useState("")
 
@@ -34,6 +36,7 @@ export function CreateAccount() {
 }
 
 export function Login() {
+    useEffect(() => {Analytics.visited("Login")}, [useLocation])
     let navigate = useNavigate();
     let [err_node, set_err_node] = useState("")
 
@@ -53,6 +56,7 @@ export function Login() {
 }
 
 export function ConfirmAccount() {
+    useEffect(() => {Analytics.visited("ConfirmAccount")}, [])
     let navigate = useNavigate();
 
     interface ConfirmState {
@@ -111,6 +115,7 @@ export function ConfirmAccount() {
 }
 
 export function SelectSubscription() {
+    useEffect(() => {Analytics.visited("SelectSubscription")}, [useLocation()])
     let navigate = useNavigate();
     
     const title = "Select an option"

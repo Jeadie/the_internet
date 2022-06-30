@@ -4,6 +4,7 @@ import { InternetContent } from './model';
 import { local_data } from './local_data';
 import { NewsAppHeader } from './NewsAppHeader';
 import { Table } from './Table';
+import Analytics from "../ana"
 
 interface IProps {
   isLocal: boolean
@@ -20,6 +21,8 @@ export default class NewsApp extends React.Component<IProps, NewsAppState> {
   }
 
   componentDidMount() {
+    Analytics.visited("News")
+
     if (this.props.isLocal) {
       this.setState({
         content: JSON.parse(local_data)
@@ -40,11 +43,10 @@ export default class NewsApp extends React.Component<IProps, NewsAppState> {
       <div className="App">
         <NewsAppHeader/>
           <div className="py-2 flex flex-row">
-          <div className="xl:basis-1/6 lg:basis-1/6"></div>
+            <div className="xl:basis-1/6 lg:basis-1/6"></div>
             <Table isLocal={this.props.isLocal}/>
             <div className="xl:basis-1/6 lg:basis-1/6"></div>
           </div>
-          
         </div>
     );
   }

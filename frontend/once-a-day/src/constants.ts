@@ -1,9 +1,14 @@
 
-export class URL {
-    static readonly ROOT = "/";
-    static readonly NEWS_BASE = "/news";
-    static readonly LOGIN = "/login";
-    static readonly CREATE_ACCOUNT = "/create-account";
-    static readonly SUBSCRIPTIONS = "/subscription";
-    static readonly CONFIRM_ACCOUNT = "/confirm-account";
+export enum URL {
+    ROOT = "/",
+    NEWS_BASE = "/news",
+    LOGIN = "/login",
+    CREATE_ACCOUNT = "/create-account",
+    SUBSCRIPTIONS = "/subscription",
+    CONFIRM_ACCOUNT = "/confirm-account"
+}
+export type VALID_PATH = URL.ROOT | URL.NEWS_BASE | URL.LOGIN | URL.CREATE_ACCOUNT | URL.SUBSCRIPTIONS | URL.CONFIRM_ACCOUNT
+
+export class API_KEY {
+    static readonly MIXPANEL = "26bbed7c38f303f0108b507263736579"
 }

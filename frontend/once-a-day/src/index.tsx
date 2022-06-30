@@ -3,24 +3,28 @@ import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter,
   Routes,
-  Route,
+  Route
 } from "react-router-dom";
 import './index.css';
 import { URL } from './constants'
 import NewsApp from './news/NewsApp';
 import HomeApp from './home/HomeApp';
 import { ConfirmAccount, CreateAccount, Login, SelectSubscription } from "./home/Forms";
-
 import reportWebVitals from './reportWebVitals';
+import Ana from './ana';
+
+const isLocal = true
+
+Ana.setup()
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-const isLocal = false
 
 root.render(
-  <React.StrictMode>
-      <BrowserRouter>
+  // TODO: StrictMode is calling double renders (and mounts, API calls etc.)
+  // <React.StrictMode>
+      <BrowserRouter >
         <Routes>
           <Route path={URL.ROOT} element={<HomeApp/>}/>
           <Route path={URL.NEWS_BASE} element={<NewsApp isLocal={isLocal} />}/>
@@ -30,7 +34,7 @@ root.render(
           <Route path={URL.CONFIRM_ACCOUNT} element={<ConfirmAccount/>}/>
         </Routes>
     </BrowserRouter>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

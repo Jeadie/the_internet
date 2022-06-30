@@ -1,5 +1,7 @@
 import React from 'react';
+import Analytics from '../ana';
 import { URL } from '../constants';
+import { HistoryRouterProps } from 'react-router-dom';
 
 interface IProps {
 }
@@ -8,8 +10,9 @@ interface HomeAppState {
 }
 
 export default class HomeApp extends React.Component<IProps, HomeAppState> {
-  constructor(props: IProps) {
-    super(props)
+
+  componentDidMount() {
+    Analytics.visited("home")
   }
 
   render() {

@@ -6,7 +6,6 @@ import { Content } from './Content';
 import { TableFilter } from "./TableFilter"
 import { valueContainerCSS } from 'react-select/dist/declarations/src/components/containers';
 
-
 interface TableProps {
   isLocal: boolean
 }
@@ -27,6 +26,7 @@ constructor(props: TableProps) {
   delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
   componentDidMount() {
+
     if (this.props.isLocal) {
       this.delay(1000).then( () => {
         this.setState({
