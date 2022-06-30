@@ -4,7 +4,6 @@ import { InternetContent, getInternetContentFilterKey } from './model';
 import { local_data } from './local_data';
 import { Content } from './Content';
 import { TableFilter } from "./TableFilter"
-import { valueContainerCSS } from 'react-select/dist/declarations/src/components/containers';
 
 interface TableProps {
   isLocal: boolean

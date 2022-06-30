@@ -13,7 +13,7 @@ import { ConfirmAccount, CreateAccount, Login, SelectSubscription } from "./home
 import reportWebVitals from './reportWebVitals';
 import Ana from './ana';
 
-const isLocal = true
+const isLocal = false
 
 Ana.setup()
 

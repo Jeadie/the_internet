@@ -1,7 +1,6 @@
 import { API_KEY } from './constants';
 import mixpanel from 'mixpanel-browser';
 
-
 export interface NewsClickProperties {
   url: string;
   title?: string;
