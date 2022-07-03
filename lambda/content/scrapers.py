@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, tzinfo
 from enum import Enum
 from typing import Dict, List, Union
 
@@ -152,18 +152,18 @@ class AFRInternetContentProvider(InternetContentProvider):
         # "1 min ago", "23 mins ago"
         if x == "1 min ago" or " mins ago" in x:
             min = int(x.split(" ")[0])
-            return datetime.now() - timedelta(minutes=min)
+            return datetime.now(tz=pytz.UTC) - timedelta(minutes=min)
 
         # "1 hr ago" Does not appear "2 hrs ago" exists.
         if x == "1 hr ago":
-            return datetime.now() - timedelta(hours=1)
+            return datetime.now(tz=pytz.UTC) - timedelta(hours=1)
 
         try:
             # "May 9, 2022"
             return datetime.strptime(x, "%b %d, %Y")
 
         except ValueError:
-            return datetime.now()
+            return datetime.now(tz=pytz.UTC)
 
 
 class RedditChannelContentProvider(InternetContentProvider):
@@ -345,7 +345,7 @@ class IndieHackerContentProvider(InternetContentProvider):
         post_date = x.find("a", class_="feed-item__date")
 
         if not post_date:
-            return datetime.now()
+            return datetime.now(tz=pytz.UTC)
 
         # April 29 at 5:18 PM
         published = post_date.get("title")
@@ -439,7 +439,7 @@ class HackerNewsContentProvider(InternetContentProvider):
         age_span = score_metadata.find("span", class_="age")
 
         if not age_span:
-            return datetime.now()
+            return datetime.now(tz=pytz.UTC)
 
         time = age_span.get("title")
 
@@ -479,3 +479,10 @@ def get_all_internet_content(providers: List[InternetContentProvider]) -> List[I
             print(f"Error occurred when getting content for {provider.get_content_id()}. Error: {e}")
 
     return result
+
+
+if __name__ == "__main__":
+    result = get_all_internet_content([HackerNewsContentProvider()])
+
+    for r in result:
+        print(r)
