@@ -1,4 +1,6 @@
+from typing import Dict, List
 from dynamo import batch_put_results
+from lambda.content.scrapers import InternetContent
 from scrape_config import ScrapeConfig
 from scrapers import get_all_internet_content
 from api_news import NewsApi
@@ -12,6 +14,10 @@ def handler(event, context):
     # Web scraping
     content_providers = ScrapeConfig.get_content_providers()
     result = get_all_internet_content(content_providers)
+
+    counts = calculate_content_counts(result)
+    print(counts)
+    
     batch_put_results(result)
 
 
@@ -24,3 +30,9 @@ def handler(event, context):
         'statusCode' : 200,
         'body': "Hello World",
     }
+
+def calculate_content_counts(content: List[InternetContent]) -> Dict[str, int]:
+    counts = dict([(x.content_type , 0) for x in content])
+    for c in content:
+        counts[c.content_type]+=1
+    return counts
