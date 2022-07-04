@@ -2,12 +2,8 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"strconv"
-	"time"
 
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -75,39 +71,20 @@ func PostInternetContentFromToday(ctx context.Context, content []InternetContent
 	return err
 }
 
-func GetInternetContentFromToday(ctx context.Context) []InternetContent {
-	dao := GetDao(ctx)
+func GetInternetContentFromToday(ctx context.Context) ([]InternetContent, error) {
 	var content []InternetContent
+	tableName := "InternetContent"
 
-	yesterday := time.Now().Add(-1 * 24 * time.Hour)
-
-	expr, err := expression.NewBuilder().WithFilter(
-		expression.Name("timestamp").GreaterThanEqual(expression.Value(
-			time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 0, 0, 0, 0, time.UTC).Unix()))).Build()
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return content
-	}
-	table := "InternetContent"
-	q, err := dao.Scan(ctx, &dynamodb.ScanInput{
-		ExpressionAttributeNames:  expr.Names(),
-		ExpressionAttributeValues: expr.Values(),
-		FilterExpression:          expr.Filter(),
-		ProjectionExpression:      expr.Projection(),
-		TableName:                 &table,
+	q, err := GetDao(ctx).Scan(ctx, &dynamodb.ScanInput{
+		TableName: &tableName,
 	})
-
 	if err != nil {
-		fmt.Println(err)
-		return content
+		return content, err
 	}
+
 	err = attributevalue.UnmarshalListOfMaps(q.Items, &content)
 	if err != nil {
-		log.Printf("failed to unmarshal Dynamodb Scan Items, %v\n", err)
-		return content
+		return content, err
 	}
-
-	return content
-
+	return content, nil
 }
