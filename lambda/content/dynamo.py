@@ -1,9 +1,11 @@
 from cmath import e
 import json
 from typing import Dict, List, Union
+from datetime import datetime, timedelta
 
 import boto3
 from botocore.exceptions import ClientError
+import pytz
 
 from scrapers import InternetContent
 
@@ -32,6 +34,8 @@ def put_results(table, content: List[InternetContent]):
 
 def convert_internet_content(c: InternetContent) -> Dict[str, Union[str, int]]:
     """ Convert an InternetContent object to a DynamoDB-friendly item."""
+    expiresOn = datetime.now(tz=pytz.UTC) + timedelta(hours=36)
+
     return {
         "timestamp" : int(c.timestamp.timestamp()),
         "title" : c.title,
@@ -42,5 +46,8 @@ def convert_internet_content(c: InternetContent) -> Dict[str, Union[str, int]]:
         "upvotes": c.content.get("upvotes", 0),
         "comments": c.content.get("comments", 0),
         "imageSourceUrl": c.content.get("img", ""),
-        "mainCategory": c.subtype
+        "mainCategory": c.subtype,
+
+        # Must match the ttl field in the DynamoDb.
+        "expiresOn": int(expiresOn.timestamp())
     }
