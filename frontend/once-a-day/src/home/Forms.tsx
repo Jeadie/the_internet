@@ -78,7 +78,9 @@ export function ConfirmAccount() {
     const submit = () => {
         UserAPI.confirmRegistration(
             state["Verification Code"],
-            () => {navigate(URL.SUBSCRIPTIONS)},
+
+            // TODO: change to URL.SUBSCRIPTIONS when out of Beta.
+            () => {navigate(URL.NEWS_BASE)},
             handleError
         )
     }
@@ -94,7 +96,7 @@ export function ConfirmAccount() {
 
     const handleError = (e: Error) => {
         if (e.message == "NoUser") {
-            setState({...state, err_node: <p className="text-md text-center">Please login, <a className="underline" href={URL.LOGIN}>here</a></p>})
+            setState({...state, err_node: <p className="text-md text-center">You already have an account. Please login, <a className="underline" href={URL.LOGIN}>here</a></p>})
         } else {
             setState({...state, err_node: ErrorText(e.message)})
         }

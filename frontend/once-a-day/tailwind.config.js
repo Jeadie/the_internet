@@ -7,11 +7,11 @@ module.exports = {
   theme: {
     extend: {},
     colors: {
-        test: colors.indigo,
+        test: colors.orange,
         white: colors.white,
         grey: colors.grey,
         gray: colors.gray,
-        red: colors.rose, 
+        red: colors.red, 
     }
   },
   plugins: [],
