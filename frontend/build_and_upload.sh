@@ -1,9 +1,3 @@
-
-
-
-echo $1
-exit 1
-
 cd once-a-day/
 
 # Make sure we don't deploy a local build.
@@ -18,7 +12,7 @@ cd -
 
 
 # Create invalidation on `--force`
-if [$1 == "--force"]; then
-    echo "[INFO] - Creating a AWS CDN validation" 
+if [ $1 == "--force" ]; then
+    echo "[INFO] - Creating an AWS CDN validation" 
     aws cloudfront create-invalidation --distribution-id $(aws cloudfront list-distributions --query 'DistributionList.Items[0].Id' | sed 's/"//g') --paths /
 fi
