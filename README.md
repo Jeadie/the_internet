@@ -32,3 +32,6 @@ curl -X POST -H "Content-Type: application/json" \
 - Make timestamp of datetime.now() -> date.today() to avoid duplicates.
 - Frontend if no DDB data is returned
 - Frontend, match items on location (not just location+subtype)
+- Mixpanel collect via proxy: https://developer.mixpanel.com/docs/collection-via-a-proxy
+
+hackernoon, stratecherry
