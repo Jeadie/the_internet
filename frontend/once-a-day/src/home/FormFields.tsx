@@ -64,11 +64,49 @@ export function ErrorText(value: string | ReactNode) {
   return (<p className="text-md text-center text-red-500">{value}</p>)
 }
 
-export function FormButton(buttonText: string) {
+export function Spinner(className: string) {
+  {/* From https://raw.githubusercontent.com/SamHerbert/SVG-Loaders/master/svg-loaders/bars.svg */}
+  const size = 38
+  const strokeWidth = 5
+  const radius = (size/2) - strokeWidth
+  const color = "#000"
   return (
-  <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
-    {buttonText}
-  </button>
+    <div className={"flex justify-center items-center " + className}>
+      <svg width={size} height={size} viewBox={[0, 0, size+5, size+5].join(" ")} xmlns="http://www.w3.org/2000/svg">
+          <defs>
+              <linearGradient x1="8.042%" y1="0%" x2="65.682%" y2="23.865%" id="a">
+                  <stop stop-color={color} stop-opacity="0" offset="0%"/>
+                  <stop stop-color={color} stop-opacity=".631" offset="63.146%"/>
+                  <stop stop-color={color} offset="100%"/>
+              </linearGradient>
+          </defs>
+          <g fill="none" fill-rule="evenodd">
+              <g transform="translate(7 7)">
+                  <path d="M33 14c0-9.94-8.06-14-14-14" id="Oval-2" stroke="url(#a)" stroke-width={strokeWidth}>
+                      <animateTransform
+                          attributeName="transform"
+                          type="rotate"
+                          from={[0, radius, radius].join(" ")}
+                          to={[360, radius, radius].join(" ")}
+                          dur="0.7s"
+                          repeatCount="indefinite" />
+                  </path>
+              </g>
+          </g>
+      </svg>
+    </div>
+  )
+}
+
+export function FormButton(buttonText: string) {
+
+  return (
+    <div>
+      <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
+        {buttonText}
+      </button>
+      {Spinner("my-4")}
+    </div>
   )
 }
 
