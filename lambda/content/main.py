@@ -1,8 +1,7 @@
 from typing import Dict, List
 from dynamo import batch_put_results
-from lambda.content.scrapers import InternetContent
 from scrape_config import ScrapeConfig
-from scrapers import get_all_internet_content
+from scrapers import get_all_internet_content, InternetContent
 from api_news import NewsApi
 
 
