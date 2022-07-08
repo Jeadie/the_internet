@@ -43,6 +43,16 @@ constructor(props: TableProps) {
     }
   }
 
+  toDay(x: Date): Date {
+    /**
+     * Converts a datetime to a day (i.e strips hours, minutes, seconds, etc.)
+     */
+     x.setHours(0);
+     x.setMinutes(0);
+     x.setSeconds(0);
+     return x
+  }
+
   getVisibleContent(state: TableState): InternetContent[] {
     /**
      * Returns the content that should be visible to the user. 
@@ -55,9 +65,7 @@ constructor(props: TableProps) {
     const {content, filters} = this.state
     const visibleContent = filters.length > 0 ? content.filter((x) => filters.includes(getInternetContentFilterKey(x)) ) : content
 
-    const urlToVisibleContent = new Map(visibleContent.map(item =>[item.url, item]))    
-     return Array.from(urlToVisibleContent.values()).sort(() => (Math.random() > .5) ? 1 : -1)
-    
+    return this.sortInternetContentForDisplay(visibleContent)
   }
 
   getFilterKeys(state: TableState): string[] {
@@ -67,6 +75,25 @@ constructor(props: TableProps) {
     return Array.from(new Set(this.state.content.map((c) => getInternetContentFilterKey(c))))
   }
 
+  sortInternetContentForDisplay(content: InternetContent[]): InternetContent[] {
+    const urlToVisibleContent = new Map(content.map(item =>[item.url, item]))
+
+    // Strip day information 
+    const v = Array.from(urlToVisibleContent.values()).map((a) => {
+      const day = this.toDay(new Date(a.timestamp*1000))
+      a.timestamp = day.getTime()/1000;
+      return a
+    })
+
+    return content
+      .sort((a, b) => (Math.random() > .5) ? 1 : -1)
+      .sort((a, b) => {
+      if (a.timestamp == b.timestamp) { return 0 }
+
+      // Reverse order
+      return a.timestamp > b.timestamp ? -1 : 1
+      })
+  }
 
   render() {
     const visibleContent = this.getVisibleContent(this.state)
