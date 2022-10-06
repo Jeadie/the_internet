@@ -25,7 +25,7 @@ export function Content({ news }: ContentProps) {
         })
     }
     return (
-        <article onClick={() => clicked()}  className="news-content shadow-lg hover:shadow-2xl col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
+        <article onClick={() => clicked()}  className="news-content md:w-auto w-screen shadow-lg hover:shadow-2xl col-span-1 p-6 my-2 mx-2 bg-white sm:p-8 rounded-xl ring ring-test-50 hover:bg-test-50">
             <div className="flex">
         
             <div className="sm:ml-8">

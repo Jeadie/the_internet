@@ -44,7 +44,7 @@ export class TableFilter extends React.Component<TableFilterProps, TableFilterSt
           this.props.onChange(values)
         }}
         options={options}
-        className="basic-multi-select"
+        className="basic-multi-select md:w-auto w-screen"
         classNamePrefix="select"
         isDisabled={this.props.isDisabled}
     />

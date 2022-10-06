@@ -99,13 +99,11 @@ export function Spinner(className: string) {
 }
 
 export function FormButton(buttonText: string) {
-
   return (
     <div>
       <button type="submit" className="block w-full px-5 py-3 text-sm font-medium text-white bg-test-600 rounded-lg">
         {buttonText}
       </button>
-      {Spinner("my-4")}
     </div>
   )
 }
